@@ -8,6 +8,4 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @ComponentScan("com.leverx.internship_project")
 @Configuration
 @EnableWebMvc
-public class SpringConfig implements WebMvcConfigurer {
-
-}
+public class SpringConfig implements WebMvcConfigurer {}
