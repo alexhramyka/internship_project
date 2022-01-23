@@ -1,8 +1,8 @@
-package com.leverx.internship_project.config;
+package com.leverx.internship.project.config;
 
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
-public class MyMvcDispatcher extends AbstractAnnotationConfigDispatcherServletInitializer {
+public class WebConfig extends AbstractAnnotationConfigDispatcherServletInitializer {
 
   @Override
   protected Class<?>[] getRootConfigClasses() {
@@ -11,7 +11,7 @@ public class MyMvcDispatcher extends AbstractAnnotationConfigDispatcherServletIn
 
   @Override
   protected Class<?>[] getServletConfigClasses() {
-    return null;
+    return new Class[]{};
   }
 
   @Override
