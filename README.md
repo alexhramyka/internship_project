@@ -32,36 +32,36 @@ Backend application built on Spring Core to keep track of employees and their wo
 ## REST API:
 
 * ### authorization
-  * [POST] registration
-  * [POST] login
-
+  * [POST] api/registration
+  * [POST] api/login
+  * [POST] api/logout
 * ### employees
-  * [GET] employees
-  * [GET] employees/{id}
-  * [POST] employees
-  * [PATCH] employees/{id}
-  * [DELETE] employees/{id}
-  * [POST] employees/upload (requestParam file)
-  * [GET] employees/available?moment=...
-  * [GET] employees/report?type=...
+  * [GET] api/employees
+  * [GET] api/employees/{id}
+  * [POST] api/employees
+  * [PATCH] api/employees/{id}
+  * [DELETE] api/employees/{id}
+  * [POST] api/employees/upload (requestParam file)
+  * [GET] api/employees/available?moment=...
+  * [GET] api/employees/report?type=...
 
 * ### departments
-  * [GET] departments
-  * [GET] departments/{id}
-  * [POST] departments
-  * [PATCH] departments/{id}
-  * [DELETE] departments/{id}
-  * [POST] departments/{id}/{user_id}
-  * [DELETE] departments/{id}/{user_id}
+  * [GET] api/departments
+  * [GET] api/departments/{id}
+  * [POST] api/departments
+  * [PATCH] api/departments/{id}
+  * [DELETE] api/departments/{id}
+  * [POST] api/departments/{id}/{user_id}
+  * [DELETE] api/departments/{id}/{user_id}
 
 * ### projects
-  * [GET] projects
-  * [GET] projects/{id}
-  * [POST] projects
-  * PATCH] projects/{id}
-  * [DELETE] projects/{id}
-  * [POST] projects/{id}/{user_id}
-  * [DELETE] projects/{id}/{user_id}
+  * [GET] api/projects
+  * [GET] api/projects/{id}
+  * [POST] api/projects
+  * PATCH] api/projects/{id}
+  * [DELETE] api/projects/{id}
+  * [POST] api/projects/{id}/{user_id}
+  * [DELETE] api/projects/{id}/{user_id}
 
 ## Use Cases:
 
