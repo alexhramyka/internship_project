@@ -1,37 +1,18 @@
 package com.leverx.internship.project.config;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import springfox.documentation.builders.ApiInfoBuilder;
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.service.ApiInfo;
-import springfox.documentation.service.Contact;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
+import org.springframework.context.annotation.Import;
 
-@EnableSwagger2
 @Configuration
-public class SwaggerConfig {
-  @Bean
-  public Docket api() {
-    return new Docket(DocumentationType.SWAGGER_2)
-        .select()
-        .apis(RequestHandlerSelectors.any())
-        .paths(PathSelectors.any())
-        .build()
-        .apiInfo(apiEndPointsInfo());
-  }
-
-  private ApiInfo apiEndPointsInfo() {
-    return new ApiInfoBuilder()
-        .title("phat")
-        .description("Test Management REST API")
-        .contact(new Contact("Alex", "https://github.com/alexhramyka", "aliaksandr.hramyka@gmail.com"))
-        .license("Apache 2.0")
-        .licenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html")
-        .version("1.0.0")
-        .build();
-  }
-}
+@Import({
+    org.springdoc.core.SpringDocConfigProperties.class,
+    org.springdoc.core.SpringDocConfiguration.class,
+    org.springdoc.webmvc.core.SpringDocWebMvcConfiguration.class,
+    org.springdoc.webmvc.core.MultipleOpenApiSupportConfiguration.class,
+    org.springdoc.core.SwaggerUiConfigProperties.class,
+    org.springdoc.core.SwaggerUiOAuthProperties.class,
+    org.springdoc.webmvc.ui.SwaggerConfig.class,
+    org.springdoc.core.CacheOrGroupedOpenApiCondition.class,
+    org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration.class
+})
+public class SwaggerConfig {}
