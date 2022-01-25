@@ -23,8 +23,8 @@
     <javax.servlet.api.version>4.0.1</javax.servlet.api.version>
     <spring.data.version>2.6.1</spring.data.version>
     <spring.security.version>5.6.0</spring.security.version>
-    <hibernate.validator.version>7.0.1.Final</hibernate.validator.version>
-    <spring.test.version>5.3.14</spring.test.version>
+    <hibernate.validator.version>7.0.2.Final</hibernate.validator.version>
+    <spring.test.version>5.3.15</spring.test.version>
     <mockito.junit.jupiter.version>4.2.0</mockito.junit.jupiter.version>
     <spring.security.test.version>5.5.1</spring.security.test.version>
     <jjwt.version>0.9.1</jjwt.version>
@@ -34,6 +34,8 @@
     <commons.lang.version>2.6</commons.lang.version>
     <slf4j.version>1.7.33</slf4j.version>
     <springdoc.version>1.6.4</springdoc.version>
+    <liquibase.version>4.7.0</liquibase.version>
+    <postgresql.version>42.3.1</postgresql.version>
 
     <checkstyle.plugin.version>3.1.2</checkstyle.plugin.version>
     <checkstyle.puppycrawl.version>9.0.1</checkstyle.puppycrawl.version>
@@ -73,6 +75,12 @@
     </dependency>
 
     <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>${postgresql.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-jdbc</artifactId>
       <version>${spring.version}</version>
@@ -85,7 +93,7 @@
     </dependency>
 
     <dependency>
-      <groupId>org.hibernate</groupId>
+      <groupId>org.hibernate.validator</groupId>
       <artifactId>hibernate-validator</artifactId>
       <version>${hibernate.validator.version}</version>
     </dependency>
@@ -198,7 +206,7 @@
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
-      <version>RELEASE</version>
+      <version>1.18.22</version>
       <scope>compile</scope>
     </dependency>
 
@@ -242,6 +250,12 @@
       <artifactId>mockito-junit-jupiter</artifactId>
       <version>${mockito.junit.jupiter.version}</version>
       <scope>test</scope>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/javax.validation/validation-api -->
+    <dependency>
+      <groupId>javax.validation</groupId>
+      <artifactId>validation-api</artifactId>
+      <version>2.0.1.Final</version>
     </dependency>
 
     <dependency>
@@ -315,7 +329,6 @@
             </execution>
           </executions>
         </plugin>
-
 
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
