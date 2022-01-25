@@ -16,4 +16,5 @@
             <column name="name" type="VARCHAR(50)"/>
         </createTable>
     </changeSet>
+
 </databaseChangeLog>
