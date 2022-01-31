@@ -1,13 +1,10 @@
 package com.leverx.internship.project.user.repository.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.leverx.internship.project.security.Role;
+import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.Date;
 
 @Entity
 @Table(name = "users")
@@ -15,9 +12,40 @@ import javax.persistence.Table;
 @AllArgsConstructor
 @Setter
 @Getter
+@ToString
 public class User {
+
   @Id
+  @SequenceGenerator(name = "user_id_seq", sequenceName = "user_id_seq", allocationSize = 1)
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "user_id_seq")
   private int id;
 
-  private String name;
+  @Column(name = "first_name", nullable = false)
+  private String firstName;
+
+  @Column(name = "last_name", nullable = false)
+  private String lastName;
+
+  @Column(name = "email", nullable = false, unique = true)
+  private String email;
+
+  @Column(name = "password", nullable = false)
+  private String password;
+
+  @Column(name = "is_active", nullable = false)
+  private boolean isActive;
+
+  @Column(name = "role_", nullable = false)
+  @Enumerated(EnumType.STRING)
+  private Role role;
+
+  @Column(name = "created_at", nullable = false)
+  private Date createdAt;
+
+  @Column(name = "updated_at", nullable = false)
+  private Date updatedAt;
+
+//  @ManyToOne(fetch = FetchType.LAZY)
+//  JoinColumn(name = "department_id")
+//  private Department department;
 }
