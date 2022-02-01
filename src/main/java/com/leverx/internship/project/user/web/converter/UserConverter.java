@@ -5,6 +5,9 @@ import com.leverx.internship.project.user.web.dto.UserDto;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
+import java.util.Map;
+
 @Component
 public class UserConverter {
   private final ModelMapper mapper = new ModelMapper();
@@ -15,6 +18,15 @@ public class UserConverter {
     if (userDto != null) {
       return mapper.map(userDto, User.class);
     } else return null;
+  }
+
+  public UserDto toUpdatedUserDto(Map<String, Object> values, User user) {
+    if (values != null) {
+      UserDto userDto = toUserDto(user);
+      mapper.map(values, userDto);
+      userDto.setUpdatedAt(new Date());
+      return userDto;
+    } return null;
   }
 
   public UserDto toUserDto(User user) {

@@ -1,30 +1,43 @@
 package com.leverx.internship.project.user.web.controller;
 
-import com.leverx.internship.project.user.repository.UserRepository;
+import com.leverx.internship.project.user.service.UserService;
+import com.leverx.internship.project.user.web.dto.UserDto;
 import lombok.AllArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.EntityNotFoundException;
-import javax.validation.Valid;
+import java.util.Map;
 
 @RestController
-@RequestMapping("users/")
+@RequestMapping("users")
 @AllArgsConstructor
 public class UserController {
-  private UserRepository userRepository;
+  private UserService userService;
 
   @GetMapping
-  public String getUsers(){
-    return userRepository.findAll().toString();
+  public String getUsers(@RequestParam(required = false, defaultValue = "3") int size,
+                         @RequestParam(required = false, defaultValue = "0") int page,
+                         @RequestParam(required = false) String search){
+    return userService.findAll(page, size, search).toString();
   }
 
   @GetMapping("/{id}")
-  public String getUser(@PathVariable("id") @Valid int id) {
-    return userRepository.findById(id)
-        .orElseThrow(() -> new EntityNotFoundException("User with id: " + id + " doesn't exist"))
-        .toString();
+  public String getUser(@PathVariable("id") int id) {
+    return userService.findById(id).toString();
+  }
+
+  @PostMapping
+  public String create(@RequestBody UserDto userDto) {
+    return userService.create(userDto);
+  }
+
+  @PatchMapping("/{id}")
+  public String update(@PathVariable("id") int id,
+                       @RequestBody Map<String, Object> values) {
+    return userService.update(id, values);
+  }
+
+  @DeleteMapping("/{id}")
+  public String delete(@PathVariable("id") int id) {
+    return userService.delete(id);
   }
 }
