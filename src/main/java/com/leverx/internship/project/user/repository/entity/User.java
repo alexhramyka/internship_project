@@ -1,15 +1,18 @@
 package com.leverx.internship.project.user.repository.entity;
 
+import com.leverx.internship.project.project.repository.entity.Project;
 import com.leverx.internship.project.security.Role;
-import lombok.*;
-
-import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
+import javax.persistence.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(name = "users")
-@NoArgsConstructor
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Setter
 @Getter
 @ToString
@@ -45,6 +48,13 @@ public class User {
   @Column(name = "updated_at", nullable = false)
   private Date updatedAt;
 
+  @ManyToMany
+  @JoinTable(
+      name = "employee_has_projects",
+      joinColumns = @JoinColumn(name = "employee_id"),
+      inverseJoinColumns = @JoinColumn(name = "project_id"))
+  @ToString.Exclude
+  private List<Project> projects;
 //  @ManyToOne(fetch = FetchType.LAZY)
 //  JoinColumn(name = "department_id")
 //  private Department department;

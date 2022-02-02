@@ -2,11 +2,10 @@ package com.leverx.internship.project.user.service.filter;
 
 import com.leverx.internship.project.user.repository.entity.User;
 import com.leverx.internship.project.user.service.filter.internal.SearchCriteria;
-import org.springframework.data.jpa.domain.Specification;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.springframework.data.jpa.domain.Specification;
 
 public class UserSpecificationsBuilder {
 

@@ -2,10 +2,10 @@ package com.leverx.internship.project.user.web.controller;
 
 import com.leverx.internship.project.user.service.UserService;
 import com.leverx.internship.project.user.web.dto.UserDto;
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
 
 @RestController
 @RequestMapping("users")
@@ -15,8 +15,8 @@ public class UserController {
 
   @GetMapping
   public String getUsers(@RequestParam(required = false, defaultValue = "3") int size,
-                         @RequestParam(required = false, defaultValue = "0") int page,
-                         @RequestParam(required = false) String search){
+                                 @RequestParam(required = false, defaultValue = "0") int page,
+                                 @RequestParam(required = false) String search) {
     return userService.findAll(page, size, search).toString();
   }
 

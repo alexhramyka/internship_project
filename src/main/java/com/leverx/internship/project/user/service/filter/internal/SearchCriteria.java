@@ -1,11 +1,10 @@
 package com.leverx.internship.project.user.service.filter.internal;
 
+import javax.persistence.criteria.Predicate;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import javax.persistence.criteria.Predicate;
 
 @Getter
 @Setter

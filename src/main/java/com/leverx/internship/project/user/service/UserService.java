@@ -1,8 +1,6 @@
 package com.leverx.internship.project.user.service;
 
 import com.leverx.internship.project.user.web.dto.UserDto;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 import java.util.Map;
 
