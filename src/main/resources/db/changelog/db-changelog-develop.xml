@@ -16,5 +16,26 @@
             <column name="name" type="VARCHAR(50)"/>
         </createTable>
     </changeSet>
-
+    <changeSet id="Add_new_columns_to_users" author="Alex">
+        <addColumn tableName="users">
+            <column name="password" type="VARCHAR(100)"/>
+            <column name="email" type="VARCHAR(100)">
+                <constraints unique="true" uniqueConstraintName="email_unique_constr"/>
+            </column>
+            <column name="first_name" type="VARCHAR(50)"/>
+            <column name="last_name" type="VARCHAR(50)"/>
+            <column name="is_active" type="BOOLEAN"/>
+            <column name="role_" type="VARCHAR(20)"/>
+            <column name="project_id" type="INTEGER"/>
+            <column name="department_id" type="INTEGER"/>
+            <column name="created_at" type="date"/>
+            <column name="updated_at" type="date"/>
+        </addColumn>
+    </changeSet>
+    <changeSet id="Remove_column_name" author="Alex">
+        <dropColumn tableName="users" columnName="name"/>
+    </changeSet>
+    <changeSet id="Create_user_id_seq" author="Alex">
+        <createSequence sequenceName="user_id_seq"  minValue="1" startValue="1"/>
+    </changeSet>
 </databaseChangeLog>
