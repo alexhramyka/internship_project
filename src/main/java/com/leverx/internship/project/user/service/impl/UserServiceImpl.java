@@ -64,7 +64,7 @@ public class UserServiceImpl implements UserService {
     User user = userConverter.toEntity(userDto);
     user.setCreatedAt(new Date());
     user.setUpdatedAt(new Date());
-    return userRepository.save(user).toString();
+    return "User created successfully";
   }
 
   @Transactional
@@ -75,7 +75,7 @@ public class UserServiceImpl implements UserService {
     newUser.setCreatedAt(user.getCreatedAt());
     newUser.setId(user.getId());
     newUser.setUpdatedAt(new Date());
-    return userRepository.save(newUser).toString();
+    return "User created successfully";
   }
 
   @Transactional
