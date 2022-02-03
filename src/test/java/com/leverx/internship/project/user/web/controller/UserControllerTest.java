@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -28,8 +29,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @ExtendWith({MockitoExtension.class, SpringExtension.class})
 @ContextConfiguration(classes = {SpringConfig.class, WebConfig.class, H2ConfigTest.class})
 @WebAppConfiguration(value = "src/main/java/com/leverx/internship/project")
-@Sql(value = "classpath:data.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-@Sql(value = "classpath:delete_data.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+@Sql(value = "classpath:data-test.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Sql(value = "classpath:delete_data-test.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+@Scope(value = "test")
 public class UserControllerTest {
 
   private final WebApplicationContext webApplicationContext;
@@ -101,7 +103,7 @@ public class UserControllerTest {
 
     System.out.println(response.getContentAsString());
 
-    assertEquals(HttpStatus.OK.value(), response.getStatus());
+    assertEquals(HttpStatus.CREATED.value(), response.getStatus());
   }
 
   @Test
@@ -109,7 +111,7 @@ public class UserControllerTest {
     String jsonString =
         new JSONObject()
             .put("firstName", "UserUpdated").toString();
-    final MockHttpServletResponse response = mockMvc.perform(patch("/users/{id}", 2)
+    final MockHttpServletResponse response = mockMvc.perform(put("/users/{id}", 2)
             .content(jsonString).contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
         .andReturn().getResponse();
@@ -125,8 +127,7 @@ public class UserControllerTest {
             .accept(MediaType.APPLICATION_JSON))
         .andReturn().getResponse();
 
-    assertEquals(HttpStatus.OK.value(), response.getStatus()) ;
-    assertEquals("User deleted successfully", response.getContentAsString()) ;
+    assertEquals(HttpStatus.NO_CONTENT.value(), response.getStatus()) ;
   }
 
 }
