@@ -2,9 +2,22 @@ package com.leverx.internship.project.user.repository.entity;
 
 import com.leverx.internship.project.project.repository.entity.Project;
 import com.leverx.internship.project.security.Role;
+
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -43,10 +56,10 @@ public class User {
   private Role role;
 
   @Column(name = "created_at", nullable = false)
-  private Date createdAt;
+  private LocalDate createdAt;
 
   @Column(name = "updated_at", nullable = false)
-  private Date updatedAt;
+  private LocalDate updatedAt;
 
   @ManyToMany
   @JoinTable(
