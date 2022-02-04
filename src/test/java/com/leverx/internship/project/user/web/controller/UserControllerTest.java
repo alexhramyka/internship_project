@@ -50,14 +50,14 @@ public class UserControllerTest {
   @Test
   void getAllUsersByFirstNameFieldTestPositive() throws Exception {
     MockHttpServletResponse response = mockMvc
-            .perform(
-                get("/users")
-                    .param("size", "3")
-                    .param("page", "0")
-                    .param("search", "firstName:User1")
-                    .accept(MediaType.APPLICATION_JSON))
-            .andReturn()
-            .getResponse();
+        .perform(
+            get("/users")
+                .param("size", "3")
+                .param("page", "0")
+                .param("search", "firstName:User1")
+                .accept(MediaType.APPLICATION_JSON))
+        .andReturn()
+        .getResponse();
 
     System.out.println(response.getContentAsString());
 
@@ -71,7 +71,6 @@ public class UserControllerTest {
             get("/users/{id}", 2)
                 .param("size", "3")
                 .param("page", "0")
-                .param("search", "firstName:User1")
                 .accept(MediaType.APPLICATION_JSON))
         .andReturn()
         .getResponse();
@@ -93,13 +92,13 @@ public class UserControllerTest {
             .put("is_active", "true")
             .toString();
     MockHttpServletResponse response = mockMvc
-            .perform(
-                post("/users")
-                    .content(jsonString)
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON))
-            .andReturn()
-            .getResponse();
+        .perform(
+            post("/users")
+                .content(jsonString)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+        .andReturn()
+        .getResponse();
 
     System.out.println(response.getContentAsString());
 

@@ -4,8 +4,8 @@ import com.leverx.internship.project.project.repository.entity.Project;
 import com.leverx.internship.project.security.Role;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -71,4 +71,17 @@ public class User {
 //  @ManyToOne(fetch = FetchType.LAZY)
 //  JoinColumn(name = "department_id")
 //  private Department department;
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    User user = (User) o;
+    return id == user.id && isActive == user.isActive && firstName.equals(user.firstName) && lastName.equals(user.lastName) && email.equals(user.email) && password.equals(user.password) && role == user.role;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, firstName, lastName, email, password, isActive, role);
+  }
 }

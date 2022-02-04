@@ -72,11 +72,12 @@ class UserServiceTest {
             "Ivanov",
             Role.ADMIN,
             true);
-    when(userConverter.toUserDto(any(User.class))).thenReturn(userDto1);
+    List<UserDto> usersDto = List.of(userDto1);
+    when(userConverter.userListToUserDtoList(users.toList())).thenReturn(usersDto);
 
     List<UserDto> actual = userService.findAll(0, 3, "firstName:Ivan");
 
-    assertEquals(actual.size(), expected.size());
+    assertEquals(expected.size(), actual.size());
   }
 
   @Test
@@ -208,7 +209,7 @@ class UserServiceTest {
             Role.ADMIN,
             true);
     when(userConverter.toUpdatedUserDto(
-            eq(userDtoUpdate), any(User.class)))
+        eq(userDtoUpdate), any(User.class)))
         .thenReturn(userDto);
     when( userConverter.toUserDto(any(User.class))).thenReturn(userDto);
     User user2 = new User();

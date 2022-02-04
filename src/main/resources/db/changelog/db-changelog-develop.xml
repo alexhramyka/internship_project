@@ -26,7 +26,6 @@
             <column name="last_name" type="VARCHAR(50)"/>
             <column name="is_active" type="BOOLEAN"/>
             <column name="role_" type="VARCHAR(20)"/>
-            <column name="project_id" type="INTEGER"/>
             <column name="department_id" type="INTEGER"/>
             <column name="created_at" type="date"/>
             <column name="updated_at" type="date"/>
@@ -71,5 +70,12 @@
     </changeSet>
     <changeSet id="Create_projects_id_seq" author="Alex">
         <createSequence sequenceName="project_id_seq"  minValue="1" startValue="1"/>
+    </changeSet>
+    <changeSet id="Add_delete_rule_for_empl_has_projects_fkeys" author="Alex">
+        <dropAllForeignKeyConstraints baseTableName="employee_has_projects"/>
+        <addForeignKeyConstraint baseTableName="employee_has_projects" baseColumnNames="employee_id" constraintName="empl_has_proj_user_id_fkey" referencedTableName="users"
+                                 referencedColumnNames="id" onDelete="CASCADE"/>
+        <addForeignKeyConstraint baseTableName="employee_has_projects" baseColumnNames="project_id" constraintName="empl_has_proj_project_id_fkey" referencedTableName="projects"
+                                 referencedColumnNames="id" onDelete="CASCADE"/>
     </changeSet>
 </databaseChangeLog>

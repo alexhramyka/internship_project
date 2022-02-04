@@ -13,7 +13,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(NotFoundException.class)
   public ResponseEntity<ErrorResponse> notFoundException(NotFoundException ex) {
     ErrorResponse error = new ErrorResponse(HttpStatus.NOT_FOUND,
-        String.format("Not found entity by id '%s'", ex.getMessage()));
+        String.format("Not found '%s'", ex.getMessage()));
 
     return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
   }

@@ -8,6 +8,9 @@ import lombok.NonNull;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Component
 @AllArgsConstructor
 public class UserConverter {
@@ -26,5 +29,21 @@ public class UserConverter {
 
   public UserDto toUserDto(@NonNull User user) {
     return mapper.map(user, UserDto.class);
+  }
+
+  public List<UserDto> userListToUserDtoList(List<User> users) {
+    if (users != null) {
+      List<UserDto> usersDto = new ArrayList<>();
+      users.forEach(user -> usersDto.add(toUserDto(user)));
+      return usersDto;
+    } else return new ArrayList<>();
+  }
+
+  public List<User> usersDtoListToUserList(List<UserDto> usersDto) {
+    if (usersDto != null) {
+      List<User> users = new ArrayList<>();
+      usersDto.forEach(userDto -> users.add(toEntity(userDto)));
+      return users;
+    } else return new ArrayList<>();
   }
 }

@@ -37,14 +37,12 @@ public class UserServiceImpl implements UserService {
     Pattern pattern = Pattern.compile(PARAMS_PATTERN);
     Matcher matcher = pattern.matcher(search + ",");
     EmailMatcher.buildSpec(builder, search);
-    List<UserDto> usersDto = new ArrayList<>();
     while (matcher.find()) {
       builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
     }
     Specification<User> spec = builder.build();
     Page<User> userPage = userRepository.findAll(spec, paging);
-    userPage.forEach(user -> usersDto.add(userConverter.toUserDto(user)));
-    return usersDto;
+    return userConverter.userListToUserDtoList(userPage.toList());
   }
 
   @Transactional(readOnly = true)
