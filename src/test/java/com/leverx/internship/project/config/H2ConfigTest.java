@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.Scope;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -18,30 +19,30 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
-@PropertySource("classpath:h2Config.properties")
+@PropertySource("classpath:h2Config-test.properties")
 @EnableJpaRepositories("com.leverx.internship.project")
 @EnableTransactionManagement
 public class H2ConfigTest {
 
-  @Value("${h2.driver-class-name}")
+  @Value("${test.h2.driver-class-name}")
   private String h2DriverClassName;
 
-  @Value("${h2.url}")
+  @Value("${test.h2.url}")
   private String h2Url;
 
-  @Value("${h2.username}")
+  @Value("${test.h2.username}")
   private String h2Username;
 
-  @Value("${h2.password}")
+  @Value("${test.h2.password}")
   private String h2Password;
 
-  @Value("${h2.hibernate.dialect}")
+  @Value("${test.h2.hibernate.dialect}")
   private String h2HibernateDialect;
 
-  @Value("${h2.hibernate.show_sql}")
+  @Value("${test.h2.hibernate.show_sql}")
   private String h2HibernateShowSql;
 
-  @Bean
+  @Bean()
   public DataSource dataSource() {
     DriverManagerDataSource dataSource = new DriverManagerDataSource();
     dataSource.setDriverClassName(h2DriverClassName);

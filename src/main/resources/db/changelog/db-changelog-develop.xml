@@ -26,7 +26,6 @@
             <column name="last_name" type="VARCHAR(50)"/>
             <column name="is_active" type="BOOLEAN"/>
             <column name="role_" type="VARCHAR(20)"/>
-            <column name="project_id" type="INTEGER"/>
             <column name="department_id" type="INTEGER"/>
             <column name="created_at" type="date"/>
             <column name="updated_at" type="date"/>
@@ -37,5 +36,46 @@
     </changeSet>
     <changeSet id="Create_user_id_seq" author="Alex">
         <createSequence sequenceName="user_id_seq"  minValue="1" startValue="1"/>
+    </changeSet>
+    <changeSet id="Create_table_employee_has_projects" author="Alex">
+        <createTable tableName="employee_has_projects">
+            <column name="employee_id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="empl_has_proj_user_id_pkey"/>
+            </column>
+            <column name="project_id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="empl_has_proj_user_id_pkey"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="Create_table_projects" author="Alex">
+        <createTable tableName="projects">
+            <column name="id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="projects_pkey"/>
+            </column>
+            <column name="name" type="VARCHAR(45)"/>
+            <column name="description" type="VARCHAR(255)"/>
+            <column name="date_start" type="date"/>
+            <column name="date_end" type="date"/>
+            <column name="created_at" type="date"/>
+            <column name="created_by" type="INTEGER"/>
+            <column name="updated_at" type="date"/>
+            <column name="updated_by" type="INTEGER"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="Add_foreignKey_project_id_to_empl_has_proj" author="Alex">
+        <addForeignKeyConstraint baseColumnNames="project_id" baseTableName="employee_has_projects" constraintName="empl_has_proj_proj_id_fkey" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="projects"/>
+    </changeSet>
+    <changeSet id="Add_foreignKey_user_id_to_empl_has_proj" author="Alex">
+        <addForeignKeyConstraint baseColumnNames="employee_id" baseTableName="employee_has_projects" constraintName="empl_has_proj_user_id_fkey" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="id" referencedTableName="users"/>
+    </changeSet>
+    <changeSet id="Create_projects_id_seq" author="Alex">
+        <createSequence sequenceName="project_id_seq"  minValue="1" startValue="1"/>
+    </changeSet>
+    <changeSet id="Add_delete_rule_for_empl_has_projects_fkeys" author="Alex">
+        <dropAllForeignKeyConstraints baseTableName="employee_has_projects"/>
+        <addForeignKeyConstraint baseTableName="employee_has_projects" baseColumnNames="employee_id" constraintName="empl_has_proj_user_id_fkey" referencedTableName="users"
+                                 referencedColumnNames="id" onDelete="CASCADE"/>
+        <addForeignKeyConstraint baseTableName="employee_has_projects" baseColumnNames="project_id" constraintName="empl_has_proj_project_id_fkey" referencedTableName="projects"
+                                 referencedColumnNames="id" onDelete="CASCADE"/>
     </changeSet>
 </databaseChangeLog>

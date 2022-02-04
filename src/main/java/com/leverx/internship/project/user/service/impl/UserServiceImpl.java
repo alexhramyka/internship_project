@@ -4,12 +4,12 @@ import com.leverx.internship.project.user.repository.UserRepository;
 import com.leverx.internship.project.user.repository.entity.User;
 import com.leverx.internship.project.user.service.UserService;
 import com.leverx.internship.project.user.service.filter.UserSpecificationsBuilder;
+import com.leverx.internship.project.user.service.util.EmailMatcher;
 import com.leverx.internship.project.user.web.converter.UserConverter;
 import com.leverx.internship.project.user.web.dto.UserDto;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import lombok.AllArgsConstructor;
@@ -25,33 +25,27 @@ import org.webjars.NotFoundException;
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
+  private static final String PARAMS_PATTERN = "(\\w+?)(:|<|>)(\\w+?),";
   private final UserRepository userRepository;
   private final UserConverter userConverter;
 
-  @Transactional
+  @Transactional(readOnly = true)
   @Override
   public List<UserDto> findAll(int page, int size, String search) {
     UserSpecificationsBuilder builder = new UserSpecificationsBuilder();
     Pageable paging = PageRequest.of(page, size);
-    Pattern pattern = Pattern.compile("(\\w+?)(:|<|>)(\\w+?),");
-    Pattern emailPattern = Pattern.compile(
-        "(\\w+?)(:|<|>)(([a-z0-9_-]+\\.)*[a-z0-9_-]+@[a-z0-9_-]+(\\.[a-z0-9_-]+)*\\.[a-z]{2,6}),");
+    Pattern pattern = Pattern.compile(PARAMS_PATTERN);
     Matcher matcher = pattern.matcher(search + ",");
-    Matcher emailMatcher = emailPattern.matcher(search + ",");
+    EmailMatcher.buildSpec(builder, search);
     while (matcher.find()) {
       builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
     }
-    while (emailMatcher.find()) {
-      builder.with(emailMatcher.group(1), emailMatcher.group(2), emailMatcher.group(3));
-    }
     Specification<User> spec = builder.build();
     Page<User> userPage = userRepository.findAll(spec, paging);
-    List<UserDto> usersDto = new ArrayList<>();
-    userPage.forEach(user -> usersDto.add(userConverter.toUserDto(user)));
-    return usersDto;
+    return userConverter.userListToUserDtoList(userPage.toList());
   }
 
-  @Transactional
+  @Transactional(readOnly = true)
   @Override
   public UserDto findById(int id) {
     User user = getUser(id);
@@ -60,30 +54,29 @@ public class UserServiceImpl implements UserService {
 
   @Transactional
   @Override
-  public String create(UserDto userDto) {
+  public UserDto create(UserDto userDto) {
     User user = userConverter.toEntity(userDto);
-    user.setCreatedAt(new Date());
-    user.setUpdatedAt(new Date());
-    return "User created successfully";
+    user.setCreatedAt(LocalDate.now());
+    user.setUpdatedAt(LocalDate.now());
+    return userConverter.toUserDto(userRepository.save(user));
   }
 
   @Transactional
   @Override
-  public String update(int id, Map<String, Object> values) {
+  public UserDto update(int id, UserDto userDtoUpdate) {
     User user = getUser(id);
-    User newUser = userConverter.toEntity(userConverter.toUpdatedUserDto(values, user));
+    User newUser = userConverter.toEntity(userConverter.toUpdatedUserDto(userDtoUpdate, user));
     newUser.setCreatedAt(user.getCreatedAt());
     newUser.setId(user.getId());
-    newUser.setUpdatedAt(new Date());
-    return "User created successfully";
+    newUser.setUpdatedAt(LocalDate.now());
+    return userConverter.toUserDto(userRepository.save(newUser));
   }
 
   @Transactional
   @Override
-  public String delete(int id) {
+  public void delete(int id) {
     getUser(id);
     userRepository.deleteById(id);
-    return "User deleted successfully";
   }
 
   private User getUser(int id) {

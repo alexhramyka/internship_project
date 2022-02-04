@@ -2,9 +2,22 @@ package com.leverx.internship.project.user.repository.entity;
 
 import com.leverx.internship.project.project.repository.entity.Project;
 import com.leverx.internship.project.security.Role;
-import java.util.Date;
+
+import java.time.LocalDate;
 import java.util.List;
-import javax.persistence.*;
+import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -43,10 +56,10 @@ public class User {
   private Role role;
 
   @Column(name = "created_at", nullable = false)
-  private Date createdAt;
+  private LocalDate createdAt;
 
   @Column(name = "updated_at", nullable = false)
-  private Date updatedAt;
+  private LocalDate updatedAt;
 
   @ManyToMany
   @JoinTable(
@@ -58,4 +71,17 @@ public class User {
 //  @ManyToOne(fetch = FetchType.LAZY)
 //  JoinColumn(name = "department_id")
 //  private Department department;
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    User user = (User) o;
+    return id == user.id && isActive == user.isActive && firstName.equals(user.firstName) && lastName.equals(user.lastName) && email.equals(user.email) && password.equals(user.password) && role == user.role;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, firstName, lastName, email, password, isActive, role);
+  }
 }
