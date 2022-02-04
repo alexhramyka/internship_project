@@ -1,11 +1,24 @@
 package com.leverx.internship.project.project.repository.entity;
 
 import com.leverx.internship.project.user.repository.entity.User;
-import lombok.*;
 
-import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 @Entity
 @Table(name = "projects")
@@ -20,29 +33,43 @@ public class Project {
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "project_id_seq")
   private int id;
 
-  @Column(name="name", nullable = false)
+  @Column(name = "name", nullable = false, unique = true)
   private String name;
 
-  @Column(name="description", nullable = false)
+  @Column(name = "description", nullable = false)
   private String description;
 
-  @Column(name="created_at", nullable = false, insertable = false, updatable = false)
-  private Date createdAt;
+  @Column(name = "date_start", nullable = false)
+  private LocalDate dateStart;
 
-  @Column(name="created_at", nullable = false, insertable = false, updatable = false)
-  private Date updatedAt;
+  @Column(name = "date_end", nullable = false)
+  private LocalDate dateEnd;
 
-  @Column(name="created_by", nullable = false)
+  @Column(name = "created_at", nullable = false)
+  private LocalDate createdAt;
+
+  @Column(name = "updated_at", nullable = false)
+  private LocalDate updatedAt;
+
+  @Column(name = "created_by", nullable = false)
   private int createdBy;
 
-  @Column(name="updated_by", nullable = false)
+  @Column(name = "updated_by", nullable = false)
   private int updatedBy;
 
   @ManyToMany
   @JoinTable(
-      name="employee_has_projects",
-      joinColumns = @JoinColumn(name="project_id"),
-      inverseJoinColumns = @JoinColumn(name="employee_id"))
+      name = "employee_has_projects",
+      joinColumns = @JoinColumn(name = "project_id"),
+      inverseJoinColumns = @JoinColumn(name = "employee_id"))
   @ToString.Exclude
   private List<User> employees;
+
+  public void addEmployee(User user) {
+    this.employees.add(user);
+  }
+
+  public void removeEmployee(User user) {
+    this.employees.remove(user);
+  }
 }
