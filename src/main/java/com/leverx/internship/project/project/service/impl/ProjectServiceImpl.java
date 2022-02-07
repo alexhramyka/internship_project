@@ -3,22 +3,27 @@ package com.leverx.internship.project.project.service.impl;
 import com.leverx.internship.project.project.repository.ProjectRepository;
 import com.leverx.internship.project.project.repository.entity.Project;
 import com.leverx.internship.project.project.service.ProjectService;
+import com.leverx.internship.project.project.service.filter.ProjectSpecification;
 import com.leverx.internship.project.project.web.converter.ProjectConverter;
-import com.leverx.internship.project.project.web.dto.ProjectDto;
-import com.leverx.internship.project.user.repository.entity.User;
+import com.leverx.internship.project.project.web.dto.request.ProjectBodyRequest;
+import com.leverx.internship.project.project.web.dto.request.ProjectParamRequest;
+import com.leverx.internship.project.project.web.dto.response.ProjectResponse;
+import com.leverx.internship.project.project.web.dto.response.ProjectUsersResponse;
 import com.leverx.internship.project.user.service.UserService;
 import com.leverx.internship.project.user.web.converter.UserConverter;
-import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.webjars.NotFoundException;
-
+import com.leverx.internship.project.user.web.dto.response.UserResponse;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.webjars.NotFoundException;
 
 @Service
 @AllArgsConstructor
@@ -31,73 +36,97 @@ public class ProjectServiceImpl implements ProjectService {
 
   @Transactional(readOnly = true)
   @Override
-  public List<ProjectDto> findAll(int page, int size) {
+  public List<ProjectResponse> findAll(int page, int size, ProjectParamRequest params) {
     Pageable paging = PageRequest.of(page, size);
-    Page<Project> projectPage = projectRepository.findAll(paging);
-    List<ProjectDto> projectsDto = new ArrayList<>();
-    projectPage.forEach(project -> projectsDto.add(projectConverter.toProjectDto(project)));
+    Specification<Project> spec =
+        Specification.where(
+            ProjectSpecification.projectParamHasDescription(params.getDescription())
+                .and(ProjectSpecification.projectParamHasName(params.getName())));
+    Page<Project> projectPage = projectRepository.findAll(spec, paging);
+    List<ProjectResponse> projectsDto = new ArrayList<>();
+    projectPage.forEach(project -> projectsDto.add(projectConverter.toProjectResponse(project)));
     return projectsDto;
   }
 
   @Transactional(readOnly = true)
   @Override
-  public ProjectDto findById(int id) {
+  public ProjectResponse findById(Integer id) {
     Project project = getProject(id);
-    return projectConverter.toProjectDto(project);
+    return projectConverter.toProjectResponse(project);
   }
 
   @Transactional
   @Override
-  public ProjectDto create(ProjectDto projectDto) {
-    Project project = projectConverter.toEntity(projectDto);
+  public ProjectResponse create(ProjectBodyRequest projectBodyRequest) {
+    Project project = projectConverter.toEntity(projectBodyRequest);
     project.setCreatedAt(LocalDate.now());
     project.setUpdatedAt(LocalDate.now());
-    return projectConverter.toProjectDto(projectRepository.save(project));
+    return projectConverter.toProjectResponse(projectRepository.save(project));
   }
 
   @Transactional
   @Override
-  public ProjectDto update(int id, ProjectDto projectDtoToUpdate) {
+  public ProjectResponse update(Integer id, ProjectBodyRequest projectBodyRequestToUpdate) {
     Project project = getProject(id);
-    Project newProject = projectConverter.toEntity(
-        projectConverter.toUpdatedProjectDto(projectDtoToUpdate, project));
+    Project newProject =
+        projectConverter.toEntity(
+            projectConverter.toUpdatedProjectResponse(projectBodyRequestToUpdate, project));
     newProject.setCreatedAt(project.getCreatedAt());
     newProject.setUpdatedAt(LocalDate.now());
     newProject.setId(project.getId());
-    return projectConverter.toProjectDto(projectRepository.save(newProject));
+    return projectConverter.toProjectResponse(projectRepository.save(newProject));
   }
 
   @Transactional
   @Override
-  public void delete(int id) {
+  public void delete(Integer id) {
     projectRepository.deleteById(id);
   }
 
   @Transactional
   @Override
-  public ProjectDto addUserToProject(int idProject, int idUser) {
-    User user = userConverter.toEntity(userService.findById(idUser));
-    user.setId(idUser);
-    Project project = getProject(idProject);
-    project.addEmployee(user);
-    projectRepository.save(project);
-    return projectConverter.toProjectDto(project);
+  public ProjectUsersResponse findProjectUsers(Integer id) {
+    return projectConverter.toProjectUsersResponse(getProject(id));
   }
 
   @Transactional
   @Override
-  public void deleteUserFromProject(int idProject, int idUser) {
-    User user = userConverter.toEntity(userService.findById(idUser));
+  public ProjectUsersResponse addUserToProject(Integer idProject, Integer idUser) {
+    UserResponse user = userService.findById(idUser);
     user.setId(idUser);
     Project project = getProject(idProject);
-    if (project.getEmployees().contains(user)) {
-      project.removeEmployee(user);
+    ProjectUsersResponse projectUsersResponse = projectConverter.toProjectUsersResponse(project);
+    if (!projectUsersResponse.getUsers().contains(user)) {
+      projectUsersResponse.addUser(user);
+      project.setEmployees(userConverter.usersResponseSetToUserSet(projectUsersResponse.getUsers()));
       projectRepository.save(project);
-    } else throw new NotFoundException("User with id " + idUser + " doesn't  participate in the project with id " + idProject);
+      return projectConverter.toProjectUsersResponse(project);
+    } else {
+      throw new DataIntegrityViolationException(
+          "User with id " + idUser + " already on this project");
+    }
+  }
+
+  @Transactional
+  @Override
+  public void deleteUserFromProject(Integer idProject, Integer idUser) {
+    UserResponse user = userService.findById(idUser);
+    user.setId(idUser);
+    Project project = getProject(idProject);
+    ProjectUsersResponse projectUsersResponse = projectConverter.toProjectUsersResponse(project);
+    if (projectUsersResponse.getUsers().contains(user)) {
+      projectUsersResponse.removeUser(user);
+      project.setEmployees(userConverter.usersResponseSetToUserSet(projectUsersResponse.getUsers()));
+      projectRepository.save(project);
+    } else {
+      throw new NotFoundException(
+          "User with id " + idUser + " doesn't  participate in the project with id " + idProject);
+    }
   }
 
   private Project getProject(int id) {
-    return projectRepository.findById(id)
+    return projectRepository
+        .findById(id)
         .orElseThrow(() -> new NotFoundException("Project with id: " + id + " doesn't exist"));
   }
 }

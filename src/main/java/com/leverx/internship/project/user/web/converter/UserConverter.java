@@ -25,30 +25,30 @@ public class UserConverter {
     return mapper.map(userResponse, User.class);
   }
 
-  public UserResponse toUpdatedUserDto(@NonNull UserBodyRequest userDtoUpdate, User user) {
-    UserResponse userDto = toUserResponse(user);
-    mapper.map(userDtoUpdate, userDto);
-    return userDto;
+  public UserResponse toUpdatedUserResponse(@NonNull UserBodyRequest userReqToUpdate, User user) {
+    UserResponse userResponse = toUserResponse(user);
+    mapper.map(userReqToUpdate, userResponse);
+    return userResponse;
   }
 
   public UserResponse toUserResponse(@NonNull User user) {
     return mapper.map(user, UserResponse.class);
   }
 
-  public List<UserResponse> userListToUserDtoList(List<User> users) {
+  public List<UserResponse> userListToUserResponseList(List<User> users) {
     if (users != null) {
-      List<UserResponse> usersDto = new ArrayList<>();
-      users.forEach(user -> usersDto.add(toUserResponse(user)));
-      return usersDto;
+      List<UserResponse> userResponseList = new ArrayList<>();
+      users.forEach(user -> userResponseList.add(toUserResponse(user)));
+      return userResponseList;
     } else {
       return new ArrayList<>();
     }
   }
 
-  public List<User> usersDtoListToUserList(List<UserResponse> usersDto) {
-    if (usersDto != null) {
+  public List<User> usersRespListToUserList(List<UserResponse> usersResponse) {
+    if (usersResponse != null) {
       List<User> users = new ArrayList<>();
-      usersDto.forEach(userDto -> users.add(toEntity(userDto)));
+      usersResponse.forEach(userResponse -> users.add(toEntity(userResponse)));
       return users;
     } else {
       return new ArrayList<>();
@@ -65,10 +65,10 @@ public class UserConverter {
     }
   }
 
-  public Set<User> usersDtoSetToUserSet(Set<UserResponse> usersDto) {
-    if (usersDto != null) {
+  public Set<User> usersResponseSetToUserSet(Set<UserResponse> userResponseSet) {
+    if (userResponseSet != null) {
       Set<User> users = new HashSet<>();
-      usersDto.forEach(userDto -> users.add(toEntity(userDto)));
+      userResponseSet.forEach(userResponse -> users.add(toEntity(userResponse)));
       return users;
     } else {
       return new HashSet<>();

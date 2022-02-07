@@ -1,8 +1,12 @@
 package com.leverx.internship.project.project.web.converter;
 
 import com.leverx.internship.project.project.repository.entity.Project;
-import com.leverx.internship.project.project.web.dto.ProjectDto;
+import com.leverx.internship.project.project.web.dto.request.ProjectBodyRequest;
+import com.leverx.internship.project.project.web.dto.response.ProjectResponse;
+import com.leverx.internship.project.project.web.dto.response.ProjectUsersResponse;
 import com.leverx.internship.project.user.web.converter.UserConverter;
+import java.util.HashSet;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import org.modelmapper.Converter;
@@ -15,42 +19,58 @@ public class ProjectConverter {
   private final ModelMapper mapper;
   private final UserConverter userConverter;
 
-  public Project toEntity(@NonNull ProjectDto projectDto) {
-    mapper.typeMap(ProjectDto.class, Project.class)
-        .addMappings(mapper -> mapper.skip(Project::setId))
-        .addMappings(mapper -> mapper.skip(Project::setEmployees))
-        .setPostConverter(usersDtoListToUsersListConverter());
-      return mapper.map(projectDto, Project.class);
+  public Project toEntity(@NonNull ProjectResponse projectResponse) {
+    return mapper.map(projectResponse, Project.class);
   }
 
-  public ProjectDto toUpdatedProjectDto(@NonNull ProjectDto projectDtoToUpdate, Project project) {
-      ProjectDto projectDto = toProjectDto(project);
-      mapper.map(projectDtoToUpdate, projectDto);
-      return projectDto;
+  public Project toEntity(@NonNull ProjectBodyRequest projectBodyRequest) {
+    return mapper.map(projectBodyRequest, Project.class);
   }
 
-  public ProjectDto toProjectDto(@NonNull Project project) {
-    mapper.typeMap(Project.class, ProjectDto.class)
-        .setPostConverter(usersListToUsersDtoListConverter());
-      return mapper.map(project, ProjectDto.class);
+  public ProjectUsersResponse toProjectUsersResponse(@NonNull Project project) {
+    mapper
+        .typeMap(Project.class, ProjectUsersResponse.class)
+        .setPostConverter(usersListToUsersRespListConverter());
+    return mapper.map(project, ProjectUsersResponse.class);
+  }
+
+  public ProjectResponse toUpdatedProjectResponse(
+      @NonNull ProjectBodyRequest projectBodyRequest, Project project) {
+    ProjectResponse projectResponse = toProjectResponse(project);
+    mapper.map(projectBodyRequest, projectResponse);
+    return projectResponse;
+  }
+
+  public ProjectResponse toProjectResponse(@NonNull Project project) {
+    return mapper.map(project, ProjectResponse.class);
+  }
+
+  public Set<ProjectResponse> projectSetToProjectRespSet(Set<Project> projects) {
+    if (projects != null) {
+      Set<ProjectResponse> projectResponseSet = new HashSet<>();
+      projects.forEach(project -> projectResponseSet.add(toProjectResponse(project)));
+      return projectResponseSet;
+    } else {
+      return new HashSet<>();
     }
-
-  public Converter<ProjectDto, Project> usersDtoListToUsersListConverter() {
-    return mappingContext -> {
-      ProjectDto source = mappingContext.getSource();
-      Project destination = mappingContext.getDestination();
-      destination.setEmployees(userConverter.usersDtoListToUserList(source.getUsersDto()));
-      return mappingContext.getDestination();
-    };
   }
 
-  public Converter<Project, ProjectDto> usersListToUsersDtoListConverter() {
+  public Set<Project> projectsRespListToProjectList(Set<ProjectResponse> projectResponseSet) {
+    if (projectResponseSet != null) {
+      Set<Project> projects = new HashSet<>();
+      projectResponseSet.forEach(projectResponse -> projects.add(toEntity(projectResponse)));
+      return projects;
+    } else {
+      return new HashSet<>();
+    }
+  }
+
+  public Converter<Project, ProjectUsersResponse> usersListToUsersRespListConverter() {
     return mappingContext -> {
       Project source = mappingContext.getSource();
-      ProjectDto destination = mappingContext.getDestination();
-      destination.setUsersDto(userConverter.userListToUserDtoList(source.getEmployees()));
+      ProjectUsersResponse destination = mappingContext.getDestination();
+      destination.setUsers(userConverter.usersSetToUsersResponseSet(source.getEmployees()));
       return mappingContext.getDestination();
     };
   }
-
 }

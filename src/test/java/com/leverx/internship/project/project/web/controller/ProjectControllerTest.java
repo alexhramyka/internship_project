@@ -3,7 +3,6 @@ package com.leverx.internship.project.project.web.controller;
 import com.leverx.internship.project.config.H2ConfigTest;
 import com.leverx.internship.project.config.SpringConfig;
 import com.leverx.internship.project.config.WebConfig;
-import com.leverx.internship.project.project.web.dto.ProjectDto;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
