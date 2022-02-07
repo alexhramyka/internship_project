@@ -1,18 +1,32 @@
 package com.leverx.internship.project.user.repository.entity;
 
+import com.leverx.internship.project.department.repository.entity.Department;
+import com.leverx.internship.project.project.repository.entity.Project;
 import com.leverx.internship.project.security.Role;
-import lombok.*;
-
-import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDate;
+import java.util.Set;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "users")
-@NoArgsConstructor
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Setter
 @Getter
-@ToString
 public class User {
 
   @Id
@@ -40,12 +54,15 @@ public class User {
   private Role role;
 
   @Column(name = "created_at", nullable = false)
-  private Date createdAt;
+  private LocalDate createdAt;
 
   @Column(name = "updated_at", nullable = false)
-  private Date updatedAt;
+  private LocalDate updatedAt;
 
-//  @ManyToOne(fetch = FetchType.LAZY)
-//  JoinColumn(name = "department_id")
-//  private Department department;
+  @ManyToMany(mappedBy = "employees")
+  private Set<Project> projects;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "department_id")
+  private Department department;
 }

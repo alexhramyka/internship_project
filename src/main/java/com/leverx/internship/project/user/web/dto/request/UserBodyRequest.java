@@ -1,12 +1,15 @@
-package com.leverx.internship.project.user.web.dto;
+package com.leverx.internship.project.user.web.dto.request;
 
 import com.leverx.internship.project.security.Role;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.util.Date;
 
 @Data
-public class UserDto {
+@NoArgsConstructor
+@AllArgsConstructor
+public class UserBodyRequest {
   private int id;
   private String email;
   private String password;
@@ -14,6 +17,4 @@ public class UserDto {
   private String lastName;
   private Role role;
   private boolean active;
-  private Date createdAt;
-  private Date updatedAt;
 }

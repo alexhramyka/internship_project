@@ -1,9 +1,7 @@
-package com.leverx.internship.project.user.web.controller;
+package com.leverx.internship.project.project.web.controller;
 
-import com.leverx.internship.project.user.service.UserService;
-import com.leverx.internship.project.user.web.dto.request.UserBodyRequest;
-import com.leverx.internship.project.user.web.dto.request.UserParamRequest;
-import com.leverx.internship.project.user.web.dto.response.UserResponse;
+import com.leverx.internship.project.project.service.ProjectService;
+import com.leverx.internship.project.project.web.dto.ProjectDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -23,54 +21,45 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+
+
 @RestController
-@RequestMapping("users")
+@RequestMapping("projects")
 @AllArgsConstructor
-public class UserController {
-  private UserService userService;
+public class ProjectController {
+  private final ProjectService projectService;
 
   @GetMapping
   @ResponseStatus(HttpStatus.OK)
-  @Operation(
-      summary =
-          "Get List of all users with pagination and filter by first name, last name, email from the database")
+  @Operation(summary = "Get List of all projects with pagination from the database")
   @ApiResponses(
       value = {
         @ApiResponse(
             responseCode = "200",
-            description = "Found users",
+            description = "Found projects",
             content = @Content(mediaType = "application/json")),
         @ApiResponse(
             responseCode = "500",
             description = "Internal server error",
             content = @Content)
       })
-  public List<UserResponse> getUsers(
-      @Parameter(description = "Number of users shown", example = "size=1")
+  public List<ProjectDto> getProjects(
+      @Parameter(description = "Number of projects shown", example = "size=1")
           @RequestParam(required = false, defaultValue = "3")
           int size,
       @Parameter(description = "Page number", example = "page=1")
           @RequestParam(required = false, defaultValue = "0")
-          int page,
-      @Parameter(description = "First name of required user", example = "firstName=Ivan")
-          @RequestParam(required = false)
-          String firstName,
-      @Parameter(description = "Email of required user", example = "email=mail@mail.ru")
-          @RequestParam(required = false)
-          String email,
-      @Parameter(description = "Last name of required user", example = "lastName=Ivanov")
-          @RequestParam(required = false)
-          String lastName) {
-    return userService.findAll(page, size, new UserParamRequest(firstName, email, lastName));
+          int page) {
+    return projectService.findAll(page, size);
   }
 
   @GetMapping("/{id}")
-  @Operation(summary = "Get user by id from the database")
+  @Operation(summary = "Get project by id from the database")
   @ApiResponses(
       value = {
         @ApiResponse(
             responseCode = "200",
-            description = "Found the user",
+            description = "Found the project",
             content = @Content(mediaType = "application/json")),
         @ApiResponse(responseCode = "404", description = "Not found", content = @Content),
         @ApiResponse(
@@ -79,13 +68,13 @@ public class UserController {
             content = @Content)
       })
   @ResponseStatus(HttpStatus.OK)
-  public UserResponse getUser(
-      @Parameter(description = "Required user id", example = "1") @PathVariable("id") int id) {
-    return userService.findById(id);
+  public ProjectDto getProject(
+      @Parameter(description = "Required project id", example = "1") @PathVariable("id") int id) {
+    return projectService.findById(id);
   }
 
   @PostMapping
-  @Operation(summary = "Save user to the database")
+  @Operation(summary = "Save project to the database")
   @ApiResponses(
       value = {
         @ApiResponse(
@@ -99,13 +88,13 @@ public class UserController {
             content = @Content)
       })
   @ResponseStatus(HttpStatus.CREATED)
-  public UserResponse create(
-      @Parameter(description = "User information") @RequestBody UserBodyRequest userBodyRequest) {
-    return userService.create(userBodyRequest);
+  public ProjectDto create(
+      @Parameter(description = "Project information") @RequestBody ProjectDto projectDto) {
+    return projectService.create(projectDto);
   }
 
   @PutMapping("/{id}")
-  @Operation(summary = "Save user to the database")
+  @Operation(summary = "Save project to the database")
   @ApiResponses(
       value = {
         @ApiResponse(
@@ -119,16 +108,16 @@ public class UserController {
             content = @Content)
       })
   @ResponseStatus(HttpStatus.OK)
-  public UserResponse update(
-      @Parameter(description = "Required user id", example = "1") @PathVariable("id") int id,
-      @Parameter(description = "User information for update") @RequestBody
-          UserBodyRequest userDtoUpdate) {
-    return userService.update(id, userDtoUpdate);
+  public ProjectDto update(
+      @Parameter(description = "Project information for update") @RequestBody
+          ProjectDto projectDtoToUpdate,
+      @Parameter(description = "Required project id", example = "1") @PathVariable("id") int id) {
+    return projectService.update(id, projectDtoToUpdate);
   }
 
   @DeleteMapping("/{id}")
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  @Operation(summary = "Delete user in the database")
+  @Operation(summary = "Delete project in the database")
   @ApiResponses(
       value = {
         @ApiResponse(responseCode = "200", description = "No content"),
@@ -139,7 +128,48 @@ public class UserController {
             content = @Content)
       })
   public void delete(
-      @Parameter(description = "Required user id", example = "1") @PathVariable("id") int id) {
-    userService.delete(id);
+      @Parameter(description = "Required project id", example = "1") @PathVariable("id") int id) {
+    projectService.delete(id);
+  }
+
+  @PostMapping("/{idProject}/users/{idUser}")
+  @Operation(summary = "Add user to the project in the database")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "203",
+            description = "Created",
+            content = @Content(mediaType = "application/json")),
+        @ApiResponse(responseCode = "400", description = "Bad request", content = @Content),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal server error",
+            content = @Content)
+      })
+  @ResponseStatus(HttpStatus.CREATED)
+  public ProjectDto addUserToProject(
+      @Parameter(description = "Required project id", example = "1") @PathVariable("idProject")
+          int idProject,
+      @Parameter(description = "Required user id", example = "1") @PathVariable("idUser")
+          int idUser) {
+    return projectService.addUserToProject(idProject, idUser);
+  }
+
+  @DeleteMapping("/{idProject}/users/{idUser}")
+  @Operation(summary = "Remove user from the project in the database")
+  @ApiResponses(
+      value = {
+        @ApiResponse(responseCode = "200", description = "No content"),
+        @ApiResponse(responseCode = "400", description = "Bad request", content = @Content),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal server error",
+            content = @Content)
+      })
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  public void deleteUserFromProject(
+      @Parameter(description = "Required project id") @PathVariable("idProject") int idProject,
+      @Parameter(description = "Required user id") @PathVariable("idUser") int idUser) {
+    projectService.deleteUserFromProject(idProject, idUser);
   }
 }

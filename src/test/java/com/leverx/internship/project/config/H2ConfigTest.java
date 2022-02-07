@@ -1,13 +1,10 @@
 package com.leverx.internship.project.config;
 
-import java.util.Properties;
-import javax.persistence.EntityManagerFactory;
-import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.Scope;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -17,42 +14,41 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import javax.persistence.EntityManagerFactory;
+import javax.sql.DataSource;
+import java.util.Properties;
+
 @Configuration
+@PropertySource("classpath:h2Config-test.properties")
+@EnableJpaRepositories("com.leverx.internship.project")
 @EnableTransactionManagement
-@EntityScan(basePackages = "com.leverx.internship.project")
-@EnableJpaRepositories(basePackages = "com.leverx.internship.project")
-@PropertySource("classpath:application.properties")
-public class JpaConfig {
+public class H2ConfigTest {
 
-  @Value("${scan.package}")
-  private String scanPackage;
+  @Value("${test.h2.driver-class-name}")
+  private String h2DriverClassName;
 
-  @Value("${datasource.driver-class-name}")
-  private String jdbDriverName;
+  @Value("${test.h2.url}")
+  private String h2Url;
 
-  @Value("${datasource.url}")
-  private String jdbcUrl;
+  @Value("${test.h2.username}")
+  private String h2Username;
 
-  @Value("${datasource.username}")
-  private String jdbcUsername;
+  @Value("${test.h2.password}")
+  private String h2Password;
 
-  @Value("${datasource.password}")
-  private String jdbcPassword;
+  @Value("${test.h2.hibernate.dialect}")
+  private String h2HibernateDialect;
 
-  @Value("${hibernate.dialect}")
-  private String hibernateDialect;
+  @Value("${test.h2.hibernate.show_sql}")
+  private String h2HibernateShowSql;
 
-  @Value("${hibernate.show_sql}")
-  private String hibernateShowSql;
-
-  @Bean
+  @Bean()
   public DataSource dataSource() {
     DriverManagerDataSource dataSource = new DriverManagerDataSource();
-    dataSource.setDriverClassName(jdbDriverName);
-    dataSource.setUrl(jdbcUrl);
-    dataSource.setUsername(jdbcUsername);
-    dataSource.setPassword(jdbcPassword);
-
+    dataSource.setDriverClassName(h2DriverClassName);
+    dataSource.setUrl(h2Url);
+    dataSource.setUsername(h2Username);
+    dataSource.setPassword(h2Password);
     return dataSource;
   }
 
@@ -69,7 +65,7 @@ public class JpaConfig {
   public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
     LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
     em.setDataSource(dataSource());
-    em.setPackagesToScan(scanPackage);
+    em.setPackagesToScan("com.leverx.internship");
     JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
     em.setJpaVendorAdapter(vendorAdapter);
     em.setJpaProperties(hibernateProperties());
@@ -85,8 +81,8 @@ public class JpaConfig {
 
   private Properties hibernateProperties() {
     Properties hibernateProperties = new Properties();
-    hibernateProperties.setProperty("hibernate.dialect", hibernateDialect);
-    hibernateProperties.setProperty("show_sql", hibernateShowSql);
+    hibernateProperties.setProperty("hibernate.dialect", h2HibernateDialect);
+    hibernateProperties.setProperty("show_sql", h2HibernateShowSql);
     return hibernateProperties;
   }
 }
