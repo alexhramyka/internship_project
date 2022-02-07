@@ -73,7 +73,7 @@ class UserServiceTest {
             Role.ADMIN,
             true);
     List<UserResponse> usersDto = List.of(userDto1);
-    when(userConverter.userListToUserDtoList(users.toList())).thenReturn(usersDto);
+    when(userConverter.userListToUserResponseList(users.toList())).thenReturn(usersDto);
 
     List<UserResponse> actual = userServiceUnderTest.findAll(0, 3, new UserParamRequest("Alex", null, null));
 
@@ -208,7 +208,7 @@ class UserServiceTest {
             "Ivanov",
             Role.ADMIN,
             true);
-    when(userConverter.toUpdatedUserDto(
+    when(userConverter.toUpdatedUserResponse(
         eq(userDtoUpdate), any(User.class)))
         .thenReturn(userDto);
     when( userConverter.toUserResponse(any(User.class))).thenReturn(userDto);

@@ -1,9 +1,8 @@
 package com.leverx.internship.project.project.repository.entity;
 
 import com.leverx.internship.project.user.repository.entity.User;
-
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,13 +17,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 @Entity
 @Table(name = "projects")
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class Project {
@@ -62,14 +59,5 @@ public class Project {
       name = "employee_has_projects",
       joinColumns = @JoinColumn(name = "project_id"),
       inverseJoinColumns = @JoinColumn(name = "employee_id"))
-  @ToString.Exclude
-  private List<User> employees;
-
-  public void addEmployee(User user) {
-    this.employees.add(user);
-  }
-
-  public void removeEmployee(User user) {
-    this.employees.remove(user);
-  }
+  private Set<User> employees;
 }

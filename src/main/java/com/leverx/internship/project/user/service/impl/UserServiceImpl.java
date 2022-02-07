@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
                 .and(UserSpecification.userParamHasLastName(params.getLastName())));
     Pageable paging = PageRequest.of(page, size);
     Page<User> userPage = userRepository.findAll(spec, paging);
-    return userConverter.userListToUserDtoList(userPage.toList());
+    return userConverter.userListToUserResponseList(userPage.toList());
   }
 
   @Transactional(readOnly = true)
@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
   @Override
   public UserResponse update(Integer id, UserBodyRequest userBodyRequest) {
     User user = getUser(id);
-    User newUser = userConverter.toEntity(userConverter.toUpdatedUserDto(userBodyRequest, user));
+    User newUser = userConverter.toEntity(userConverter.toUpdatedUserResponse(userBodyRequest, user));
     newUser.setCreatedAt(user.getCreatedAt());
     newUser.setId(user.getId());
     newUser.setUpdatedAt(LocalDate.now());

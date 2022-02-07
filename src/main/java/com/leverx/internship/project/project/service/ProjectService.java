@@ -1,20 +1,25 @@
 package com.leverx.internship.project.project.service;
 
-import com.leverx.internship.project.project.web.dto.ProjectDto;
+import com.leverx.internship.project.project.web.dto.request.ProjectBodyRequest;
+import com.leverx.internship.project.project.web.dto.request.ProjectParamRequest;
+import com.leverx.internship.project.project.web.dto.response.ProjectResponse;
+import com.leverx.internship.project.project.web.dto.response.ProjectUsersResponse;
 import java.util.List;
 
 public interface ProjectService {
-  List<ProjectDto> findAll(int page, int size);
+  List<ProjectResponse> findAll(int page, int size, ProjectParamRequest params);
 
-  ProjectDto findById(int id);
+  ProjectResponse findById(Integer id);
 
-  ProjectDto create(ProjectDto projectDto);
+  ProjectResponse create(ProjectBodyRequest projectBodyRequest);
 
-  ProjectDto update(int id, ProjectDto projectDtoToUpdate);
+  ProjectResponse update(Integer id, ProjectBodyRequest projectBodyRequestToUpdate);
 
-  void delete(int id);
+  void delete(Integer id);
 
-  ProjectDto addUserToProject(int idProject, int idUser);
+  ProjectUsersResponse findProjectUsers(Integer id);
 
-  void deleteUserFromProject(int idProject, int idUser);
+  ProjectUsersResponse addUserToProject(Integer idProject, Integer idUser);
+
+  void deleteUserFromProject(Integer idProject, Integer idUser);
 }
