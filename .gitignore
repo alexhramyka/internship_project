@@ -1,6 +1,0 @@
-# Ignore .idea
-/.idea
-# Ignore target
-/target
-# Ignore .iml files
-*.iml
