@@ -15,6 +15,8 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <maven.compiler.source>17</maven.compiler.source>
     <maven.compiler.target>17</maven.compiler.target>
+    <cargo.maven3.plugin.version>1.9.9</cargo.maven3.plugin.version>
+    <path.to.apache.tomcat>C:\apache-tomcat-9.0.56</path.to.apache.tomcat>
     <spring.version>5.3.15</spring.version>
     <hibernate.version>5.6.5.Final</hibernate.version>
     <jackson.module.kotlin.version>2.13.1</jackson.module.kotlin.version>
@@ -378,20 +380,15 @@
         <plugin>
         <groupId>org.codehaus.cargo</groupId>
         <artifactId>cargo-maven3-plugin</artifactId>
-        <version>1.9.9</version>
+        <version>${cargo.maven3.plugin.version}</version>
         <configuration>
           <container>
             <containerId>tomcat9x</containerId>
             <type>installed</type>
-            <home>C:\apache-tomcat-9.0.56</home>
+            <home>${path.to.apache.tomcat}</home>
           </container>
-          <configuration>
-            <type>existing</type>
-            <home>C:\apache-tomcat-9.0.56</home>
-          </configuration>
         </configuration>
       </plugin>
-
         <plugin>
           <groupId>org.liquibase</groupId>
           <artifactId>liquibase-maven-plugin</artifactId>

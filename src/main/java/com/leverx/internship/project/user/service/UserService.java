@@ -1,17 +1,22 @@
 package com.leverx.internship.project.user.service;
 
-import com.leverx.internship.project.user.web.dto.UserDto;
+import com.leverx.internship.project.user.repository.entity.User;
+import com.leverx.internship.project.user.web.dto.request.UserBodyRequest;
+import com.leverx.internship.project.user.web.dto.request.UserParamRequest;
+import com.leverx.internship.project.user.web.dto.response.UserResponse;
 import java.util.List;
 
 public interface UserService {
 
-  List<UserDto> findAll(int page, int size, String search);
+  List<UserResponse> findAll(int page, int size, UserParamRequest params);
 
-  UserDto findById(int id);
+  UserResponse findById(Integer id);
 
-  UserDto create(UserDto user);
+  UserResponse create(UserBodyRequest user);
 
-  UserDto update(int id, UserDto userDto);
+  UserResponse update(Integer id, UserBodyRequest userDto);
 
-  void delete(int id);
+  void delete(Integer id);
+
+  User getUser(Integer id);
 }

@@ -3,15 +3,13 @@ package com.leverx.internship.project.user.service.impl;
 import com.leverx.internship.project.user.repository.UserRepository;
 import com.leverx.internship.project.user.repository.entity.User;
 import com.leverx.internship.project.user.service.UserService;
-import com.leverx.internship.project.user.service.filter.UserSpecificationsBuilder;
-import com.leverx.internship.project.user.service.util.EmailMatcher;
+import com.leverx.internship.project.user.service.filter.UserSpecification;
 import com.leverx.internship.project.user.web.converter.UserConverter;
-import com.leverx.internship.project.user.web.dto.UserDto;
+import com.leverx.internship.project.user.web.dto.request.UserBodyRequest;
+import com.leverx.internship.project.user.web.dto.request.UserParamRequest;
+import com.leverx.internship.project.user.web.dto.response.UserResponse;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,61 +23,58 @@ import org.webjars.NotFoundException;
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
-  private static final String PARAMS_PATTERN = "(\\w+?)(:|<|>)(\\w+?),";
   private final UserRepository userRepository;
   private final UserConverter userConverter;
 
   @Transactional(readOnly = true)
   @Override
-  public List<UserDto> findAll(int page, int size, String search) {
-    UserSpecificationsBuilder builder = new UserSpecificationsBuilder();
+  public List<UserResponse> findAll(int page, int size, UserParamRequest params) {
+    Specification<User> spec =
+        Specification.where(
+            UserSpecification.userParamHasEmail(params.getEmail())
+                .and(UserSpecification.userParamHasFirstName(params.getFirstName()))
+                .and(UserSpecification.userParamHasLastName(params.getLastName())));
     Pageable paging = PageRequest.of(page, size);
-    Pattern pattern = Pattern.compile(PARAMS_PATTERN);
-    Matcher matcher = pattern.matcher(search + ",");
-    EmailMatcher.buildSpec(builder, search);
-    while (matcher.find()) {
-      builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
-    }
-    Specification<User> spec = builder.build();
     Page<User> userPage = userRepository.findAll(spec, paging);
     return userConverter.userListToUserDtoList(userPage.toList());
   }
 
   @Transactional(readOnly = true)
   @Override
-  public UserDto findById(int id) {
+  public UserResponse findById(Integer id) {
     User user = getUser(id);
-    return userConverter.toUserDto(user);
+    return userConverter.toUserResponse(user);
   }
 
   @Transactional
   @Override
-  public UserDto create(UserDto userDto) {
+  public UserResponse create(UserBodyRequest userDto) {
     User user = userConverter.toEntity(userDto);
     user.setCreatedAt(LocalDate.now());
     user.setUpdatedAt(LocalDate.now());
-    return userConverter.toUserDto(userRepository.save(user));
+    return userConverter.toUserResponse(userRepository.save(user));
   }
 
   @Transactional
   @Override
-  public UserDto update(int id, UserDto userDtoUpdate) {
+  public UserResponse update(Integer id, UserBodyRequest userBodyRequest) {
     User user = getUser(id);
-    User newUser = userConverter.toEntity(userConverter.toUpdatedUserDto(userDtoUpdate, user));
+    User newUser = userConverter.toEntity(userConverter.toUpdatedUserDto(userBodyRequest, user));
     newUser.setCreatedAt(user.getCreatedAt());
     newUser.setId(user.getId());
     newUser.setUpdatedAt(LocalDate.now());
-    return userConverter.toUserDto(userRepository.save(newUser));
+    return userConverter.toUserResponse(userRepository.save(newUser));
   }
 
   @Transactional
   @Override
-  public void delete(int id) {
+  public void delete(Integer id) {
     getUser(id);
     userRepository.deleteById(id);
   }
 
-  private User getUser(int id) {
+  @Override
+  public User getUser(Integer id) {
     return userRepository.findById(id)
         .orElseThrow(() -> new NotFoundException("User with id: " + id + " doesn't exist"));
   }

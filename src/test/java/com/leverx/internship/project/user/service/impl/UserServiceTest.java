@@ -5,7 +5,9 @@ import com.leverx.internship.project.user.repository.UserRepository;
 import com.leverx.internship.project.user.repository.entity.User;
 import com.leverx.internship.project.user.service.UserService;
 import com.leverx.internship.project.user.web.converter.UserConverter;
-import com.leverx.internship.project.user.web.dto.UserDto;
+import com.leverx.internship.project.user.web.dto.request.UserBodyRequest;
+import com.leverx.internship.project.user.web.dto.request.UserParamRequest;
+import com.leverx.internship.project.user.web.dto.response.UserResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,20 +29,18 @@ import static org.mockito.Mockito.*;
 class UserServiceTest {
 
   @Mock private UserRepository userRepository;
-  private UserService userService;
+  private UserService userServiceUnderTest;
   @Mock private UserConverter userConverter;
 
-  UserServiceTest() {}
-
   @BeforeEach
-  public void initUseCase() {
-    userService = new UserServiceImpl(userRepository, userConverter) {};
+  public void init() {
+    userServiceUnderTest = new UserServiceImpl(userRepository, userConverter) {};
   }
 
   @Test
   void findAllPositiveTest() {
-    UserDto userDto =
-        new UserDto(
+    UserResponse userDto =
+        new UserResponse(
             1,
             "mail1@mail.ru",
             "password",
@@ -48,7 +48,7 @@ class UserServiceTest {
             "Ivanov",
             Role.ADMIN,
             true);
-    List<UserDto> expected = new ArrayList<>();
+    List<UserResponse> expected = new ArrayList<>();
     expected.add(userDto);
     User user = new User();
     user.setId(1);
@@ -63,8 +63,8 @@ class UserServiceTest {
             List.of(user));
     when(userRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(users);
 
-    UserDto userDto1 =
-        new UserDto(
+    UserResponse userDto1 =
+        new UserResponse(
             1,
             "mail1@mail.ru",
             "password",
@@ -72,17 +72,17 @@ class UserServiceTest {
             "Ivanov",
             Role.ADMIN,
             true);
-    List<UserDto> usersDto = List.of(userDto1);
+    List<UserResponse> usersDto = List.of(userDto1);
     when(userConverter.userListToUserDtoList(users.toList())).thenReturn(usersDto);
 
-    List<UserDto> actual = userService.findAll(0, 3, "firstName:Ivan");
+    List<UserResponse> actual = userServiceUnderTest.findAll(0, 3, new UserParamRequest("Alex", null, null));
 
     assertEquals(expected.size(), actual.size());
   }
 
   @Test
   void saveUserPositiveTest() {
-    UserDto expected = new UserDto(
+    UserResponse expected = new UserResponse(
         1,
         "mail1@mail.ru",
         "password",
@@ -91,8 +91,8 @@ class UserServiceTest {
         Role.ADMIN,
         true);
 
-    UserDto userDto =
-        new UserDto(
+    UserBodyRequest userDto =
+        new UserBodyRequest(
             1,
             "mail1@mail.ru",
             "password",
@@ -111,8 +111,8 @@ class UserServiceTest {
     user.setUpdatedAt(LocalDate.of(2022, 2, 1));
     when(userConverter.toEntity(userDto)).thenReturn(user);
 
-    final UserDto userDto1 = new UserDto(1, "mail1@mail.ru", "password", "Ivan", "Ivanov", Role.ADMIN, true);
-    when( userConverter .toUserDto(any(User.class))).thenReturn(userDto1);
+    final UserResponse userDto1 = new UserResponse(1, "mail1@mail.ru", "password", "Ivan", "Ivanov", Role.ADMIN, true);
+    when( userConverter .toUserResponse(any(User.class))).thenReturn(userDto1);
 
     User user1 = new User();
     user1.setId(1);
@@ -124,15 +124,15 @@ class UserServiceTest {
     user1.setUpdatedAt(LocalDate.of(2022, 2, 1));
     when(userRepository.save(any(User.class))).thenReturn(user1);
 
-    final UserDto result = userService.create(userDto);
+    final UserResponse result = userServiceUnderTest.create(userDto);
 
     assertEquals(expected, result);
   }
 
   @Test
   void FindByIdPositiveTest() {
-    UserDto expected =
-        new UserDto(
+    UserResponse expected =
+        new UserResponse(
             1,
             "mail1@mail.ru",
             "password",
@@ -151,8 +151,8 @@ class UserServiceTest {
     final Optional<User> userOptional =
         Optional.of(user);
     when(userRepository.findById(1)).thenReturn(userOptional);
-    UserDto userDto =
-        new UserDto(
+    UserResponse userDto =
+        new UserResponse(
             1,
             "mail1@mail.ru",
             "password",
@@ -160,18 +160,18 @@ class UserServiceTest {
             "Ivanov",
             Role.ADMIN,
             true);
-    when(userConverter.toUserDto(any(User.class))).thenReturn(userDto);
+    when(userConverter.toUserResponse(any(User.class))).thenReturn(userDto);
 
     // Run the test
-    final UserDto result = userService.findById(1);
+    final UserResponse result = userServiceUnderTest.findById(1);
 
     assertEquals(expected, result);
   }
 
   @Test
   void updateUserPositiveTest() {
-    final UserDto expected = new UserDto(1, "mail1@mail.ru", "password", "Alex", "Ivanov", Role.ADMIN, true);
-    final UserDto userDtoUpdate = new UserDto();
+    final UserResponse expected = new UserResponse(1, "mail1@mail.ru", "password", "Alex", "Ivanov", Role.ADMIN, true);
+    final UserBodyRequest userDtoUpdate = new UserBodyRequest();
     userDtoUpdate.setFirstName("Alex");
     User user = new User();
     user.setId(1);
@@ -197,10 +197,10 @@ class UserServiceTest {
     user1.setActive(true);
     user1.setCreatedAt(LocalDate.of(2022, 2, 1));
     user1.setUpdatedAt(LocalDate.of(2022, 2, 1));
-    when(userConverter.toEntity(any(UserDto.class))).thenReturn(user1);
+    when(userConverter.toEntity(any(UserResponse.class))).thenReturn(user1);
 
-    final UserDto userDto =
-        new UserDto(
+    final UserResponse userDto =
+        new UserResponse(
             1,
             "mail1@mail.ru",
             "password",
@@ -211,7 +211,7 @@ class UserServiceTest {
     when(userConverter.toUpdatedUserDto(
         eq(userDtoUpdate), any(User.class)))
         .thenReturn(userDto);
-    when( userConverter.toUserDto(any(User.class))).thenReturn(userDto);
+    when( userConverter.toUserResponse(any(User.class))).thenReturn(userDto);
     User user2 = new User();
     user2.setId(1);
     user2.setPassword("password");
@@ -224,7 +224,7 @@ class UserServiceTest {
     user2.setUpdatedAt(LocalDate.of(2022, 2, 1));
     when(userRepository.save(any(User.class))).thenReturn(user2);
 
-    final UserDto result = userService.update(1, userDtoUpdate);
+    final UserResponse result = userServiceUnderTest.update(1, userDtoUpdate);
 
     assertEquals(expected, result);
   }
@@ -243,6 +243,6 @@ class UserServiceTest {
         Optional.of(user);
     when(userRepository.findById(1)).thenReturn(userOptional);
 
-    userService.delete(1);
+    userServiceUnderTest.delete(1);
   }
 }

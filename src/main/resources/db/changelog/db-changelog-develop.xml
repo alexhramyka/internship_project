@@ -78,4 +78,36 @@
         <addForeignKeyConstraint baseTableName="employee_has_projects" baseColumnNames="project_id" constraintName="empl_has_proj_project_id_fkey" referencedTableName="projects"
                                  referencedColumnNames="id" onDelete="CASCADE"/>
     </changeSet>
+    <changeSet id="Create_departments_table" author="Alex">
+        <createTable tableName="departments">
+            <column name="id" type="INTEGER">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="departments_pkey"/>
+            </column>
+            <column name="name" type="VARCHAR(45)"/>
+            <column name="description" type="VARCHAR(255)"/>
+            <column name="created_at" type="date"/>
+            <column name="created_by" type="int"/>
+            <column name="updated_at" type="date"/>
+            <column name="updated_by" type="int"/>
+        </createTable>
+    </changeSet>
+    <changeSet id="Create_department_id_seq" author="Alex">
+        <createSequence sequenceName="department_id_seq" minValue="1" startValue="1"/>
+    </changeSet>
+    <changeSet id="Create_table_deparment_has_projects" author="Alex">
+        <createTable tableName="department_has_projects">
+            <column name="department_id" type="int">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="depart_has_proj_department_id_pkey"/>
+            </column>
+            <column name="project_id" type="int">
+                <constraints nullable="false" primaryKey="true" primaryKeyName="depart_has_proj_project_id_pkey"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="Add_FK_constraints_for_depart_has_projects" author="Alex">
+        <addForeignKeyConstraint baseTableName="department_has_projects" baseColumnNames="department_id" constraintName="depart_has_proj_depart_id_fkey" referencedTableName="departments"
+                                 referencedColumnNames="id" onDelete="CASCADE"/>
+        <addForeignKeyConstraint baseTableName="department_has_projects" baseColumnNames="project_id" constraintName="depart_has_proj_project_id_fkey" referencedTableName="projects"
+                                 referencedColumnNames="id" onDelete="CASCADE"/>
+    </changeSet>
 </databaseChangeLog>

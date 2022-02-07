@@ -1,14 +1,15 @@
-package com.leverx.internship.project.user.web.dto;
+package com.leverx.internship.project.user.web.dto.request;
 
 import com.leverx.internship.project.security.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserDto {
+public class UserBodyRequest {
   private int id;
   private String email;
   private String password;

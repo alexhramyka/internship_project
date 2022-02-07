@@ -54,7 +54,7 @@ public class UserControllerTest {
             get("/users")
                 .param("size", "3")
                 .param("page", "0")
-                .param("search", "firstName:User1")
+                .param("firstName", "User2")
                 .accept(MediaType.APPLICATION_JSON))
         .andReturn()
         .getResponse();
