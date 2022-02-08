@@ -149,7 +149,7 @@ public class DepartmentControllerTest {
 
     System.out.println(response.getContentAsString());
 
-    assertEquals(HttpStatus.OK.value(), response.getStatus());
+    assertEquals(HttpStatus.CREATED.value(), response.getStatus());
   }
 
   @Test
@@ -160,6 +160,6 @@ public class DepartmentControllerTest {
 
     System.out.println(response.getContentAsString());
 
-    assertEquals(HttpStatus.OK.value(), response.getStatus());
+    assertEquals(HttpStatus.NO_CONTENT.value(), response.getStatus());
   }
 }

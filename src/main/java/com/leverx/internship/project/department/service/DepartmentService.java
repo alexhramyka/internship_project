@@ -22,5 +22,9 @@ public interface DepartmentService {
 
   DepartmentProjectsResponse addProjectToDepartment(Integer idDepartment, Integer idProject);
 
-  void removeProjectFromDepartment(int idDepartment, int idProject);
+  void removeProjectFromDepartment(Integer idDepartment, Integer idProject);
+
+  DepartmentUsersResponse findAllUsersInDepartment(Integer idDep);
+
+  DepartmentProjectsResponse findAllProjectsInDepartment(Integer idDep);
 }

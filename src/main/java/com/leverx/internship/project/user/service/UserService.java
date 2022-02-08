@@ -19,6 +19,4 @@ public interface UserService {
   UserResponse update(Integer id, UserBodyRequest userDto);
 
   void delete(Integer id);
-
-  User getUser(Integer id);
 }

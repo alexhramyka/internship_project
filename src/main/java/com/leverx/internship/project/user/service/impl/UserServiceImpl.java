@@ -1,5 +1,6 @@
 package com.leverx.internship.project.user.service.impl;
 
+import com.leverx.internship.project.security.model.Role;
 import com.leverx.internship.project.user.repository.UserRepository;
 import com.leverx.internship.project.user.repository.entity.User;
 import com.leverx.internship.project.user.service.UserService;
@@ -59,6 +60,7 @@ public class UserServiceImpl implements UserService {
   @Override
   public UserResponse create(UserBodyRequest userDto) {
     User user = userConverter.toEntity(userDto);
+    user.setRole(Role.valueOf(userDto.getRole().toString()));
     user.setCreatedAt(LocalDate.now());
     user.setUpdatedAt(LocalDate.now());
     return userConverter.toUserResponse(userRepository.save(user));
@@ -83,8 +85,7 @@ public class UserServiceImpl implements UserService {
     userRepository.deleteById(id);
   }
 
-  @Override
-  public User getUser(Integer id) {
+  private User getUser(Integer id) {
     return userRepository
         .findById(id)
         .orElseThrow(() -> new NotFoundException("User with id: " + id + " doesn't exist"));

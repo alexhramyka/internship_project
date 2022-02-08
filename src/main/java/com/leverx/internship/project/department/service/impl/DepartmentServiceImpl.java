@@ -114,7 +114,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
   @Override
   @Transactional
-  public void removeProjectFromDepartment(int idDepartment, int idProject) {
+  public void removeProjectFromDepartment(Integer idDepartment, Integer idProject) {
     DepartmentProjectsResponse departmentProjectsResponse = departmentConverter
         .toDepartmentProjectsResponse(getDepartment(idDepartment));
     ProjectResponse project = projectService.findById(idProject);
@@ -126,7 +126,20 @@ public class DepartmentServiceImpl implements DepartmentService {
     } else throw new NotFoundException("Project with id " + idProject + " doesn't  exists in department with id " + idDepartment);
   }
 
-  private Department getDepartment(int id) {
+  @Override
+  @Transactional
+  public DepartmentUsersResponse findAllUsersInDepartment(Integer idDep) {
+    return departmentConverter.toDepartmentsUsersResponse(departmentRepository.getById(idDep));
+  }
+
+
+  @Override
+  @Transactional
+  public DepartmentProjectsResponse findAllProjectsInDepartment(Integer idDep) {
+    return departmentConverter.toDepartmentProjectsResponse(departmentRepository.getById(idDep));
+  }
+
+  private Department getDepartment(Integer id) {
     return departmentRepository
         .findById(id)
         .orElseThrow(() -> new NotFoundException("Department with id: " + id + " doesn't exist"));

@@ -132,18 +132,98 @@ public class DepartmentController {
     departmentService.delete(id);
   }
 
+  @Operation(summary = "Add user to department")
+  @ApiResponses(
+      value = {
+        @ApiResponse(responseCode = "200", description = "Ok"),
+        @ApiResponse(responseCode = "400", description = "Bad request", content = @Content),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal server error",
+            content = @Content)
+      })
+  @ResponseStatus(HttpStatus.OK)
   @PutMapping("/{idDep}/users/{idUser}")
-  public DepartmentUsersResponse addUserToDep(@PathVariable("idDep") int idDep, @PathVariable("idUser") int idUser) {
+  public DepartmentUsersResponse addUserToDep(
+      @Parameter(description = "Required department id", example = "1") @PathVariable("idDep")
+          int idDep,
+      @Parameter(description = "Required user id", example = "1") @PathVariable("idUser")
+          int idUser) {
     return departmentService.addEmployeeToDepartment(idDep, idUser);
   }
 
   @PostMapping("/{idDep}/projects/{idProject}")
-  public DepartmentProjectsResponse addProjectToDep(@PathVariable("idDep") int idDep, @PathVariable("idProject") int idProject) {
+  @Operation(summary = "Add project to department")
+  @ApiResponses(
+      value = {
+          @ApiResponse(
+              responseCode = "203",
+              description = "Created",
+              content = @Content(mediaType = "application/json")),
+          @ApiResponse(responseCode = "400", description = "Bad request", content = @Content),
+          @ApiResponse(
+              responseCode = "500",
+              description = "Internal server error",
+              content = @Content)
+      })
+  @ResponseStatus(HttpStatus.CREATED)
+  public DepartmentProjectsResponse addProjectToDep(
+      @Parameter(description = "Required department id", example = "1")
+      @PathVariable("idDep") int idDep,
+      @Parameter(description = "Required project id", example = "1")
+      @PathVariable("idProject") int idProject) {
     return departmentService.addProjectToDepartment(idDep, idProject);
   }
 
   @DeleteMapping("/{idDep}/projects/{idProject}")
+  @Operation(summary = "Delete project from department")
+  @ApiResponses(
+      value = {
+          @ApiResponse(responseCode = "200", description = "No content"),
+          @ApiResponse(responseCode = "400", description = "Bad request", content = @Content),
+          @ApiResponse(
+              responseCode = "500",
+              description = "Internal server error",
+              content = @Content)
+      })
+  @ResponseStatus(HttpStatus.NO_CONTENT)
   public void deleteProjectToDep(@PathVariable("idDep") int idDep, @PathVariable("idProject") int idProject) {
     departmentService.removeProjectFromDepartment(idDep, idProject);
+  }
+
+  @GetMapping("/{idDep}/users")
+  @Operation(summary = "Get List of all users in department")
+  @ApiResponses(
+      value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Found users",
+            content = @Content(mediaType = "application/json")),
+        @ApiResponse(
+            responseCode = "500",
+            description = "Internal server error",
+            content = @Content)
+      })
+  public DepartmentUsersResponse findAllUsersInDepartment(
+      @Parameter(description = "Required department id") @PathVariable("idDep") int idDep) {
+    return departmentService.findAllUsersInDepartment(idDep);
+  }
+
+  @GetMapping("/{idDep}/projects")
+  @Operation(summary = "Get List of all users in department")
+  @ApiResponses(
+      value = {
+          @ApiResponse(
+              responseCode = "200",
+              description = "Found projects",
+              content = @Content(mediaType = "application/json")),
+          @ApiResponse(
+              responseCode = "500",
+              description = "Internal server error",
+              content = @Content)
+      })
+  public DepartmentProjectsResponse findAllProjectsInDepartment(
+      @Parameter(description = "Required department id") @PathVariable("idDep") int idDep) {
+    return departmentService.findAllProjectsInDepartment(idDep);
   }
 }
