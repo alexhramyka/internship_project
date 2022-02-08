@@ -11,10 +11,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Service;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 @Service
 @AllArgsConstructor
@@ -38,11 +35,5 @@ public class AuthServiceImpl implements AuthService {
     } catch (AuthenticationException e) {
       throw new BadCredentialsException("Invalid username or password");
     }
-  }
-
-  @Override
-  public void logout(HttpServletRequest request, HttpServletResponse response) {
-    SecurityContextLogoutHandler securityContextLogoutHandler = new SecurityContextLogoutHandler();
-    securityContextLogoutHandler.logout(request, response, null);
   }
 }
