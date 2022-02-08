@@ -39,6 +39,15 @@ public class UserServiceImpl implements UserService {
     return userConverter.userListToUserResponseList(userPage.toList());
   }
 
+  @Override
+  @Transactional(readOnly = true)
+  public UserResponse findByEmail(String email) {
+    return userConverter.toUserResponse(
+        userRepository
+            .findUserByEmail(email)
+            .orElseThrow(() -> new NotFoundException("Such user doesn't exist")));
+  }
+
   @Transactional(readOnly = true)
   @Override
   public UserResponse findById(Integer id) {
@@ -59,7 +68,8 @@ public class UserServiceImpl implements UserService {
   @Override
   public UserResponse update(Integer id, UserBodyRequest userBodyRequest) {
     User user = getUser(id);
-    User newUser = userConverter.toEntity(userConverter.toUpdatedUserResponse(userBodyRequest, user));
+    User newUser =
+        userConverter.toEntity(userConverter.toUpdatedUserResponse(userBodyRequest, user));
     newUser.setCreatedAt(user.getCreatedAt());
     newUser.setId(user.getId());
     newUser.setUpdatedAt(LocalDate.now());
@@ -75,7 +85,8 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public User getUser(Integer id) {
-    return userRepository.findById(id)
+    return userRepository
+        .findById(id)
         .orElseThrow(() -> new NotFoundException("User with id: " + id + " doesn't exist"));
   }
 }

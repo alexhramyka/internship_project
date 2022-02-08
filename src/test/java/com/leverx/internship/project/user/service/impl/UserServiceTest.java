@@ -1,6 +1,6 @@
 package com.leverx.internship.project.user.service.impl;
 
-import com.leverx.internship.project.security.Role;
+import com.leverx.internship.project.security.model.Role;
 import com.leverx.internship.project.user.repository.UserRepository;
 import com.leverx.internship.project.user.repository.entity.User;
 import com.leverx.internship.project.user.service.UserService;

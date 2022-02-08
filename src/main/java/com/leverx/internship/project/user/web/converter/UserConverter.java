@@ -9,15 +9,21 @@ import java.util.List;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
+import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
 @AllArgsConstructor
 public class UserConverter {
   private final ModelMapper mapper;
+  private final PasswordEncoder passwordEncoder;
 
   public User toEntity(@NonNull UserBodyRequest userBodyRequest) {
+    mapper.typeMap(UserBodyRequest.class, User.class)
+        .addMappings(mapper -> mapper.skip(User::setPassword))
+        .setPostConverter(passwordConverter());
     return mapper.map(userBodyRequest, User.class);
   }
 
@@ -73,5 +79,14 @@ public class UserConverter {
     } else {
       return new HashSet<>();
     }
+  }
+
+  public Converter<UserBodyRequest, User> passwordConverter() {
+    return mappingContext -> {
+      UserBodyRequest source = mappingContext.getSource();
+      User destination = mappingContext.getDestination();
+      destination.setPassword(passwordEncoder.encode(source.getPassword()));
+      return mappingContext.getDestination();
+    };
   }
 }

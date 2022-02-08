@@ -1,6 +1,6 @@
 package com.leverx.internship.project.user.web.dto.request;
 
-import com.leverx.internship.project.security.Role;
+import com.leverx.internship.project.security.model.Role;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

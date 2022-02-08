@@ -10,6 +10,8 @@ public interface UserService {
 
   List<UserResponse> findAll(int page, int size, UserParamRequest params);
 
+  UserResponse findByEmail(String email);
+
   UserResponse findById(Integer id);
 
   UserResponse create(UserBodyRequest user);

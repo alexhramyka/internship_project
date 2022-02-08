@@ -8,7 +8,7 @@ import com.leverx.internship.project.project.web.dto.request.ProjectBodyRequest;
 import com.leverx.internship.project.project.web.dto.request.ProjectParamRequest;
 import com.leverx.internship.project.project.web.dto.response.ProjectResponse;
 import com.leverx.internship.project.project.web.dto.response.ProjectUsersResponse;
-import com.leverx.internship.project.security.Role;
+import com.leverx.internship.project.security.model.Role;
 import com.leverx.internship.project.user.repository.entity.User;
 import com.leverx.internship.project.user.service.UserService;
 import com.leverx.internship.project.user.web.converter.UserConverter;
@@ -22,7 +22,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
-
 import java.time.LocalDate;
 import java.util.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -43,7 +42,7 @@ class ProjectServiceImplTest {
   @BeforeEach
   public void init() {
     projectServiceUnderTest =
-        new ProjectServiceImpl(projectRepository, projectConverter, userService, userConverter) {};
+        new ProjectServiceImpl(projectRepository, projectConverter, userService, userConverter);
   }
 
   @Test
@@ -78,7 +77,7 @@ class ProjectServiceImplTest {
   }
 
   @Test
-  void saveUserPositiveTest() {
+  void saveProjectPositiveTest() {
     ProjectResponse expected = new ProjectResponse();
     expected.setName("name");
     expected.setDescription("description");
@@ -155,7 +154,7 @@ class ProjectServiceImplTest {
   }
 
   @Test
-  void updateUserPositiveTest() {
+  void updateProjectPositiveTest() {
     ProjectResponse expected = new ProjectResponse();
     expected.setId(1);
     expected.setName("name");

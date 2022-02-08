@@ -1,4 +1,4 @@
-package com.leverx.internship.project.project.web.controller;
+package com.leverx.internship.project.department.web.controller;
 
 import com.leverx.internship.project.config.H2ConfigTest;
 import com.leverx.internship.project.config.SpringConfig;
@@ -20,8 +20,6 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -32,13 +30,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @Sql(value = "classpath:data-test.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Sql(value = "classpath:delete_data-test.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 @Scope(value = "test")
-public class ProjectControllerTest {
+public class DepartmentControllerTest {
 
   private final WebApplicationContext webApplicationContext;
   private MockMvc mockMvc;
 
   @Autowired
-  public ProjectControllerTest(WebApplicationContext webApplicationContext) {
+  public DepartmentControllerTest(WebApplicationContext webApplicationContext) {
     this.webApplicationContext = webApplicationContext;
   }
 
@@ -48,10 +46,10 @@ public class ProjectControllerTest {
   }
 
   @Test
-  void getAllProjectsTestPositive() throws Exception {
+  void getAllDepartmentsTestPositive() throws Exception {
     MockHttpServletResponse response = mockMvc
         .perform(
-            get("/projects")
+            get("/departments")
                 .param("size", "3")
                 .param("page", "0")
                 .accept(MediaType.APPLICATION_JSON))
@@ -64,7 +62,7 @@ public class ProjectControllerTest {
   }
 
   @Test
-  void findProjectByIdTestPositive() throws Exception {
+  void findDepartmentByIdTestPositive() throws Exception {
     MockHttpServletResponse response = mockMvc
         .perform(
             get("/departments/{id}", 2)
@@ -85,12 +83,10 @@ public class ProjectControllerTest {
         new JSONObject()
             .put("name", "name1")
             .put("description", "description")
-            .put("dateStart", "2022-02-04")
-            .put("dateEnd", "2022-02-04")
             .toString();
     MockHttpServletResponse response = mockMvc
         .perform(
-            post("/projects")
+            post("/departments")
                 .content(jsonString)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
@@ -107,7 +103,7 @@ public class ProjectControllerTest {
     String jsonString =
         new JSONObject()
             .put("description", "new description").toString();
-    final MockHttpServletResponse response = mockMvc.perform(put("/projects/{id}", 2)
+    final MockHttpServletResponse response = mockMvc.perform(put("/departments/{id}", 2)
             .content(jsonString).contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
         .andReturn().getResponse();
@@ -119,7 +115,7 @@ public class ProjectControllerTest {
 
   @Test
   void deleteTestPositive() throws Exception {
-    final MockHttpServletResponse response = mockMvc.perform(delete("/projects/{id}", 4)
+    final MockHttpServletResponse response = mockMvc.perform(delete("/departments/{id}", 4)
             .accept(MediaType.APPLICATION_JSON))
         .andReturn().getResponse();
 
@@ -127,28 +123,43 @@ public class ProjectControllerTest {
   }
 
   @Test
-  void addUserToProjectTestPositive() throws Exception {
+  void addUserToDepartmentTestPositive() throws Exception {
     final MockHttpServletResponse response =
         mockMvc
             .perform(
-                post("/projects/{idProjects}/users/{idUsers}", 4, 2)
+                put("/departments/{idDep}/users/{idUser}", 4, 2)
                     .accept(MediaType.APPLICATION_JSON))
             .andReturn()
             .getResponse();
 
     System.out.println(response.getContentAsString());
 
-    assertEquals(HttpStatus.CREATED.value(), response.getStatus());
+    assertEquals(HttpStatus.OK.value(), response.getStatus());
   }
 
   @Test
-  void deleteUserFromProjectTestPositive() throws Exception {
-    final MockHttpServletResponse response = mockMvc.perform(delete("/projects/{idProjects}/users/{idUsers}", 4, 3)
+  void addProjectToDepartmentTestPositive() throws Exception {
+    final MockHttpServletResponse response =
+        mockMvc
+            .perform(
+                post("/departments/{idDep}/projects/{idProj}", 4, 2)
+                    .accept(MediaType.APPLICATION_JSON))
+            .andReturn()
+            .getResponse();
+
+    System.out.println(response.getContentAsString());
+
+    assertEquals(HttpStatus.OK.value(), response.getStatus());
+  }
+
+  @Test
+  void deleteProjectFromDepartmentTestPositive() throws Exception {
+    final MockHttpServletResponse response = mockMvc.perform(delete("/departments/{idDep}/projects/{idProj}", 3, 4)
             .accept(MediaType.APPLICATION_JSON))
         .andReturn().getResponse();
 
     System.out.println(response.getContentAsString());
 
-    assertEquals(HttpStatus.NO_CONTENT.value(), response.getStatus());
+    assertEquals(HttpStatus.OK.value(), response.getStatus());
   }
 }
