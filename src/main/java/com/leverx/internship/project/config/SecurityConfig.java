@@ -1,6 +1,7 @@
 package com.leverx.internship.project.config;
 
 import com.leverx.internship.project.security.jwt.JwtConfigurer;
+import com.leverx.internship.project.security.model.Permission;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
@@ -17,6 +18,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   private final JwtConfigurer jwtConfigurer;
+  private final String[] ALL_USERS_PERMISSION = new String[] {"/api/users/**", "/api/projects/**"};
+  private final String[] LOGOUT_ENDPOINT = new String[] {"/api/auth/logout"};
+  private final String[] PERMIT_ALL =
+      new String[] {"/api/auth/login", "/api/swagger-ui/**", "/api/v3/api-docs"};
+  private final String[] WRITE_DELETE_USER_PERMISSION = new String[] {"/api/departments/**"};
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
@@ -28,17 +34,25 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         .and()
         .authorizeRequests()
-        .antMatchers("/api/auth/login").permitAll()
-        .antMatchers(HttpMethod.GET, "/api/users/**", "/api/projects/**").hasAnyAuthority("user.read")
-        .antMatchers(HttpMethod.POST, "/api/auth/logout").hasAnyAuthority("user.read")
-        .antMatchers(HttpMethod.GET, "/api/departments/**").hasAnyAuthority("user.write")
-        .antMatchers(HttpMethod.PUT, "/api/users/**", "/api/projects/**", "/api/departments/**").hasAnyAuthority("user.delete")
-        .antMatchers(HttpMethod.POST, "/api/users/**", "/api/projects/**", "/api/departments/**").hasAnyAuthority("user.delete")
-        .antMatchers(HttpMethod.DELETE, "/api/users/**", "api/projects/**", "/api/departments/**").hasAnyAuthority("user.delete")
-        .anyRequest().authenticated()
+        .antMatchers(PERMIT_ALL)
+        .permitAll()
+        .antMatchers(HttpMethod.GET, ALL_USERS_PERMISSION)
+        .hasAnyAuthority(Permission.USER_READ.getPermission())
+        .antMatchers(HttpMethod.POST, LOGOUT_ENDPOINT)
+        .hasAnyAuthority(Permission.USER_READ.getPermission())
+        .antMatchers(HttpMethod.GET, WRITE_DELETE_USER_PERMISSION)
+        .hasAnyAuthority(Permission.USER_WRITE.getPermission())
+        .antMatchers(HttpMethod.PUT)
+        .hasAnyAuthority(Permission.USER_DELETE.getPermission())
+        .antMatchers(HttpMethod.POST)
+        .hasAnyAuthority(Permission.USER_DELETE.getPermission())
+        .antMatchers(HttpMethod.DELETE)
+        .hasAnyAuthority(Permission.USER_DELETE.getPermission())
+        .anyRequest()
+        .authenticated()
         .and()
         .apply(jwtConfigurer);
-    }
+  }
 
   @Bean
   protected PasswordEncoder passwordEncoder() {
