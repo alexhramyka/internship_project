@@ -1,5 +1,6 @@
 package com.leverx.internship.project.user.web.converter;
 
+import com.leverx.internship.project.csv.model.CsvUser;
 import com.leverx.internship.project.user.repository.entity.User;
 import com.leverx.internship.project.user.web.dto.request.UserBodyRequest;
 import com.leverx.internship.project.user.web.dto.response.UserResponse;
@@ -35,6 +36,10 @@ public class UserConverter {
     UserResponse userResponse = toUserResponse(user);
     mapper.map(userReqToUpdate, userResponse);
     return userResponse;
+  }
+
+  public User fromCsvToEntity(@NonNull CsvUser csvUser) {
+    return mapper.map(csvUser, User.class);
   }
 
   public UserResponse toUserResponse(@NonNull User user) {
