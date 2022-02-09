@@ -25,7 +25,7 @@ public class JwtTokenProvider {
 
     @Value("${jwt.secret}")
     private String secret;
-
+    private final String HEADER_NAME = "Authorization";
     @Value("${jwt.expired}")
     private long validityInMilliseconds;
 
@@ -65,7 +65,7 @@ public class JwtTokenProvider {
     }
 
     public String resolveToken(HttpServletRequest req) {
-        String bearerToken = req.getHeader("Authorization");
+        String bearerToken = req.getHeader(HEADER_NAME);
         if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
         } else return null;
