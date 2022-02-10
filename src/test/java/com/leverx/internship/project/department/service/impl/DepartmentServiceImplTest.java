@@ -23,7 +23,11 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.List;
+import java.util.Set;
+import java.util.Optional;
+import java.util.HashSet;
+import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -76,8 +80,8 @@ class DepartmentServiceImplTest {
                 LocalDate.of(2022, 1, 1),
                 LocalDate.of(2022, 1, 1),
                 LocalDate.of(2022, 1, 1),
-                0,
-                0,
+                "mail",
+                "mail",
                 Set.of(new User()))));
     final User user1 = new User();
     user1.setId(0);
@@ -99,8 +103,8 @@ class DepartmentServiceImplTest {
                 LocalDate.of(2022, 1, 1),
                 LocalDate.of(2022, 1, 1),
                 LocalDate.of(2022, 1, 1),
-                0,
-                0,
+                "mail",
+                "mail",
                 Set.of(new User()))));
     final Page<Department> departments =
         new PageImpl<>(
@@ -110,9 +114,9 @@ class DepartmentServiceImplTest {
                     "name",
                     "description",
                     LocalDate.of(2022, 1, 1),
-                    0,
+                    "mail",
                     LocalDate.of(2022, 1, 1),
-                    0,
+                    "mail",
                     List.of(user),
                     Set.of(
                         new Project(
@@ -123,8 +127,8 @@ class DepartmentServiceImplTest {
                             LocalDate.of(2022, 1, 1),
                             LocalDate.of(2022, 1, 1),
                             LocalDate.of(2022, 1, 1),
-                            0,
-                            0,
+                            "mail",
+                            "mail",
                             Set.of(user1))))));
     when(departmentRepository.findAll(any(Specification.class), any(Pageable.class)))
         .thenReturn(departments);
@@ -176,8 +180,8 @@ class DepartmentServiceImplTest {
                 LocalDate.of(2022, 1, 1),
                 LocalDate.of(2022, 1, 1),
                 LocalDate.of(2022, 1, 1),
-                0,
-                0,
+                "mail",
+                "mail",
                 Set.of(new User()))));
     final User user1 = new User();
     user1.setId(0);
@@ -199,8 +203,8 @@ class DepartmentServiceImplTest {
                 LocalDate.of(2022, 1, 1),
                 LocalDate.of(2022, 1, 1),
                 LocalDate.of(2022, 1, 1),
-                0,
-                0,
+                "mail",
+                "mail",
                 Set.of(new User()))));
     final Optional<Department> department =
         Optional.of(
@@ -209,9 +213,9 @@ class DepartmentServiceImplTest {
                 "name",
                 "description",
                 LocalDate.of(2022, 1, 1),
-                0,
+                "mail",
                 LocalDate.of(2022, 1, 1),
-                0,
+                "mail",
                 List.of(user),
                 Set.of(
                     new Project(
@@ -222,8 +226,8 @@ class DepartmentServiceImplTest {
                         LocalDate.of(2022, 1, 1),
                         LocalDate.of(2022, 1, 1),
                         LocalDate.of(2022, 1, 1),
-                        0,
-                        0,
+                        "mail",
+                        "mail",
                         Set.of(user1)))));
     when(departmentRepository.findById(0)).thenReturn(department);
 
@@ -261,8 +265,8 @@ class DepartmentServiceImplTest {
                 LocalDate.of(2022, 1, 1),
                 LocalDate.of(2022, 1, 1),
                 LocalDate.of(2022, 1, 1),
-                0,
-                0,
+                "mail",
+                "mail",
                 Set.of(new User()))));
     final User user1 = new User();
     user1.setId(1);
@@ -284,8 +288,8 @@ class DepartmentServiceImplTest {
                 LocalDate.of(2022, 1, 1),
                 LocalDate.of(2022, 1, 1),
                 LocalDate.of(2022, 1, 1),
-                0,
-                0,
+                "mail",
+                "mail",
                 Set.of(new User()))));
     final Department department =
         new Department(
@@ -293,9 +297,9 @@ class DepartmentServiceImplTest {
             "name",
             "description",
             LocalDate.of(2022, 1, 1),
-            0,
+            "mail",
             LocalDate.of(2022, 1, 1),
-            0,
+            "mail",
             List.of(user),
             Set.of(
                 new Project(
@@ -306,8 +310,8 @@ class DepartmentServiceImplTest {
                     LocalDate.of(2022, 1, 1),
                     LocalDate.of(2022, 1, 1),
                     LocalDate.of(2022, 1, 1),
-                    0,
-                    0,
+                    "mail",
+                    "mail",
                     Set.of(user1))));
     when(departmentConverter.toEntity(new DepartmentBodyRequest("name", "description")))
         .thenReturn(department);
@@ -339,8 +343,8 @@ class DepartmentServiceImplTest {
                 LocalDate.of(2022, 1, 1),
                 LocalDate.of(2022, 1, 1),
                 LocalDate.of(2022, 1, 1),
-                0,
-                0,
+                "mail",
+                "mail",
                 Set.of(new User()))));
     final User user3 = new User();
     user3.setId(1);
@@ -362,8 +366,8 @@ class DepartmentServiceImplTest {
                 LocalDate.of(2022, 1, 1),
                 LocalDate.of(2022, 1, 1),
                 LocalDate.of(2022, 1, 1),
-                0,
-                0,
+                "mail",
+                "mail",
                 Set.of(new User()))));
     final Department department1 =
         new Department(
@@ -371,9 +375,9 @@ class DepartmentServiceImplTest {
             "name",
             "description",
             LocalDate.of(2022, 1, 1),
-            0,
+            "mail",
             LocalDate.of(2022, 1, 1),
-            0,
+            "mail",
             List.of(user2),
             Set.of(
                 new Project(
@@ -384,8 +388,8 @@ class DepartmentServiceImplTest {
                     LocalDate.of(2022, 1, 1),
                     LocalDate.of(2022, 1, 1),
                     LocalDate.of(2022, 1, 1),
-                    0,
-                    0,
+                    "mail",
+                    "mail",
                     Set.of(user3))));
     when(departmentRepository.save(any(Department.class))).thenReturn(department1);
 
@@ -431,8 +435,8 @@ class DepartmentServiceImplTest {
                 LocalDate.of(2022, 1, 1),
                 LocalDate.of(2022, 1, 1),
                 LocalDate.of(2022, 1, 1),
-                0,
-                0,
+                "mail",
+                "mail",
                 Set.of(new User()))));
     final User user1 = new User();
     user1.setId(1);
@@ -454,8 +458,8 @@ class DepartmentServiceImplTest {
                 LocalDate.of(2022, 1, 1),
                 LocalDate.of(2022, 1, 1),
                 LocalDate.of(2022, 1, 1),
-                0,
-                0,
+                "mail",
+                "mail",
                 Set.of(new User()))));
     final Optional<Department> department =
         Optional.of(
@@ -464,9 +468,9 @@ class DepartmentServiceImplTest {
                 "name",
                 "description",
                 LocalDate.of(2022, 1, 1),
-                0,
+                "mail",
                 LocalDate.of(2022, 1, 1),
-                0,
+                "mail",
                 List.of(user),
                 Set.of(
                     new Project(
@@ -477,8 +481,8 @@ class DepartmentServiceImplTest {
                         LocalDate.of(2022, 1, 1),
                         LocalDate.of(2022, 1, 1),
                         LocalDate.of(2022, 1, 1),
-                        0,
-                        0,
+                        "mail",
+                        "mail",
                         Set.of(user1)))));
     when(departmentRepository.findById(1)).thenReturn(department);
 
@@ -502,8 +506,8 @@ class DepartmentServiceImplTest {
                 LocalDate.of(2022, 1, 1),
                 LocalDate.of(2022, 1, 1),
                 LocalDate.of(2022, 1, 1),
-                0,
-                0,
+                "mail",
+                "mail",
                 Set.of(new User()))));
     final User user3 = new User();
     user3.setId(1);
@@ -525,8 +529,8 @@ class DepartmentServiceImplTest {
                 LocalDate.of(2022, 1, 1),
                 LocalDate.of(2022, 1, 1),
                 LocalDate.of(2022, 1, 1),
-                0,
-                0,
+                "mail",
+                "mail",
                 Set.of(new User()))));
     final Department department1 =
         new Department(
@@ -534,9 +538,9 @@ class DepartmentServiceImplTest {
             "name",
             "description",
             LocalDate.of(2022, 1, 1),
-            0,
+            "mail",
             LocalDate.of(2022, 1, 1),
-            0,
+            "mail",
             List.of(user2),
             Set.of(
                 new Project(
@@ -547,8 +551,8 @@ class DepartmentServiceImplTest {
                     LocalDate.of(2022, 1, 1),
                     LocalDate.of(2022, 1, 1),
                     LocalDate.of(2022, 1, 1),
-                    0,
-                    0,
+                    "mail",
+                    "mail",
                     Set.of(user3))));
     when(departmentConverter.toEntity(departmentResponse)).thenReturn(department1);
     final DepartmentResponse departmentResponse1 = new DepartmentResponse();
@@ -578,8 +582,8 @@ class DepartmentServiceImplTest {
                 LocalDate.of(2022, 1, 1),
                 LocalDate.of(2022, 1, 1),
                 LocalDate.of(2022, 1, 1),
-                0,
-                0,
+                "mail",
+                "mail",
                 Set.of(new User()))));
     final User user5 = new User();
     user5.setId(1);
@@ -601,8 +605,8 @@ class DepartmentServiceImplTest {
                 LocalDate.of(2022, 1, 1),
                 LocalDate.of(2022, 1, 1),
                 LocalDate.of(2022, 1, 1),
-                0,
-                0,
+                "mail",
+                "mail",
                 Set.of(new User()))));
     final Department department2 =
         new Department(
@@ -610,9 +614,9 @@ class DepartmentServiceImplTest {
             "name",
             "description",
             LocalDate.of(2022, 1, 1),
-            0,
+            "mail",
             LocalDate.of(2022, 1, 1),
-            0,
+            "mail",
             List.of(user4),
             Set.of(
                 new Project(
@@ -623,8 +627,8 @@ class DepartmentServiceImplTest {
                     LocalDate.of(2022, 1, 1),
                     LocalDate.of(2022, 1, 1),
                     LocalDate.of(2022, 1, 1),
-                    0,
-                    0,
+                    "mail",
+                    "mail",
                     Set.of(user5))));
     when(departmentRepository.save(any(Department.class))).thenReturn(department2);
 
@@ -644,9 +648,9 @@ class DepartmentServiceImplTest {
                 "name",
                 "description",
                 LocalDate.of(2022, 1, 1),
-                0,
+                "mail",
                 LocalDate.of(2022, 1, 1),
-                0,
+                "mail",
                 new ArrayList<>(),
                 new HashSet<>()));
     when(departmentRepository.findById(0)).thenReturn(department);
@@ -685,9 +689,9 @@ class DepartmentServiceImplTest {
                 "name",
                 "description",
                 LocalDate.of(2022, 1, 1),
-                0,
+                "mail",
                 LocalDate.of(2022, 1, 1),
-                0,
+                "mail",
                 new ArrayList<>(),
                 new HashSet<>()));
     when(departmentRepository.findById(1)).thenReturn(department);
@@ -711,9 +715,9 @@ class DepartmentServiceImplTest {
             "name",
             "description",
             LocalDate.of(2022, 1, 1),
-            0,
+            "mail",
             LocalDate.of(2022, 1, 1),
-            0,
+            "mail",
             new ArrayList<>(),
             new HashSet<>());
     when(departmentRepository.save(any(Department.class))).thenReturn(department2);
@@ -745,9 +749,9 @@ class DepartmentServiceImplTest {
                 "name",
                 "description",
                 LocalDate.of(2022, 1, 1),
-                0,
+                "mail",
                 LocalDate.of(2022, 1, 1),
-                0,
+                "mail",
                 new ArrayList<>(),
                 new HashSet<>()));
     when(departmentRepository.findById(1)).thenReturn(department);
@@ -766,9 +770,9 @@ class DepartmentServiceImplTest {
             "name",
             "description",
             LocalDate.of(2022, 1, 1),
-            0,
+            "mail",
             LocalDate.of(2022, 1, 1),
-            0,
+            "mail",
             new ArrayList<>(),
             new HashSet<>());
     when(departmentConverter.toUpdatedEntity(
