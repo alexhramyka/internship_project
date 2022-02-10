@@ -1,5 +1,6 @@
-package com.leverx.internship.project.exception;
+package com.leverx.internship.project.exception.handler;
 
+import com.leverx.internship.project.exception.JwtAuthenticationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,5 +25,12 @@ public class GlobalExceptionHandler {
         String.format("Error because of constraint '%s'", ex.getMessage()));
 
     return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler(JwtAuthenticationException.class)
+  public ResponseEntity<ErrorResponse> jwtAuthException(JwtAuthenticationException ex) {
+    ErrorResponse errorResponse = new ErrorResponse(HttpStatus.FORBIDDEN,
+        String.format("Error of authentication '%s'", ex.getMessage()));
+    return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
   }
 }
