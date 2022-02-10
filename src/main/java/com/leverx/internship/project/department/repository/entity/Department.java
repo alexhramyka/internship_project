@@ -16,10 +16,16 @@ import javax.persistence.OneToMany;
 import javax.persistence.ManyToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.EntityListeners;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Table(name = "departments")
@@ -27,29 +33,34 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class Department {
   @Id
   @SequenceGenerator(sequenceName = "department_id_seq", name = "department_id_seq", allocationSize = 1)
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "department_id_seq")
   private int id;
 
-  @Column(name = "name", nullable = false)
+  @Column(name = "name", nullable = false, unique = true)
   private String name;
 
   @Column(name = "description", nullable = false)
   private String description;
 
   @Column(name = "created_at")
+  @CreatedDate
   private LocalDate createdAt;
 
   @Column(name = "created_by")
-  private int createdBy;
+  @CreatedBy
+  private String createdBy;
 
   @Column(name = "updated_at")
+  @LastModifiedDate
   private LocalDate updatedAt;
 
   @Column(name = "updated_by")
-  private int updatedBy;
+  @LastModifiedBy
+  private String updatedBy;
 
   @OneToMany
   @JoinColumn(name = "department_id")

@@ -13,10 +13,16 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.EntityListeners;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Table(name = "projects")
@@ -24,6 +30,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 public class Project {
   @Id
   @SequenceGenerator(name = "project_id_seq", sequenceName = "project_id_seq", allocationSize = 1)
@@ -43,16 +50,20 @@ public class Project {
   private LocalDate dateEnd;
 
   @Column(name = "created_at", nullable = false)
+  @CreatedDate
   private LocalDate createdAt;
 
   @Column(name = "updated_at", nullable = false)
+  @LastModifiedDate
   private LocalDate updatedAt;
 
   @Column(name = "created_by", nullable = false)
-  private int createdBy;
+  @CreatedBy
+  private String createdBy;
 
   @Column(name = "updated_by", nullable = false)
-  private int updatedBy;
+  @LastModifiedBy
+  private String updatedBy;
 
   @ManyToMany
   @JoinTable(
