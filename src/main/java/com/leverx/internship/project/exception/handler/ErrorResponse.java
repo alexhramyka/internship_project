@@ -1,4 +1,4 @@
-package com.leverx.internship.project.exception;
+package com.leverx.internship.project.exception.handler;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

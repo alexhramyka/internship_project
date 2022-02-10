@@ -6,6 +6,8 @@ import com.leverx.internship.project.user.web.dto.request.UserParamRequest;
 import com.leverx.internship.project.user.web.dto.response.UserResponse;
 import java.util.List;
 
+import org.springframework.security.core.userdetails.UserDetails;
+
 public interface UserService {
 
   List<UserResponse> findAll(int page, int size, UserParamRequest params);
@@ -19,4 +21,10 @@ public interface UserService {
   UserResponse update(Integer id, UserBodyRequest userDto);
 
   void delete(Integer id);
+
+  UserDetails getCurrentUser();
+
+  UserResponse findUserByEmail(String email);
+
+  User getUser(Integer id);
 }

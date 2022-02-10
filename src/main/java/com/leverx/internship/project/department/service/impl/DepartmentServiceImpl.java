@@ -10,8 +10,11 @@ import com.leverx.internship.project.department.web.dto.response.DepartmentProje
 import com.leverx.internship.project.department.web.dto.response.DepartmentResponse;
 import com.leverx.internship.project.department.web.dto.request.DepartmentParamRequest;
 import com.leverx.internship.project.department.web.dto.response.DepartmentUsersResponse;
+import com.leverx.internship.project.exception.JwtAuthenticationException;
+import com.leverx.internship.project.project.repository.entity.Project;
 import com.leverx.internship.project.project.service.ProjectService;
 import com.leverx.internship.project.project.web.dto.response.ProjectResponse;
+import com.leverx.internship.project.security.model.Role;
 import com.leverx.internship.project.user.service.UserService;
 import com.leverx.internship.project.user.web.dto.response.UserResponse;
 import lombok.AllArgsConstructor;
@@ -23,7 +26,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,26 +54,36 @@ public class DepartmentServiceImpl implements DepartmentService {
   @Override
   @Transactional(readOnly = true)
   public DepartmentResponse findById(Integer id) {
-    return departmentConverter.toDepartmentResponse(getDepartment(id));
+    Department department = getDepartment(id);
+    UserResponse userResponse =
+        userService.findUserByEmail(userService.getCurrentUser().getUsername());
+    if (departmentConverter
+            .toDepartmentsUsersResponse(department)
+            .getEmployeesDto()
+            .contains(userResponse)
+        || Role.ADMIN.equals(userResponse.getRole())) {
+      return departmentConverter.toDepartmentResponse(department);
+    }
+    throw new JwtAuthenticationException("You don't have permission for this action");
   }
 
   @Override
   @Transactional
   public DepartmentResponse create(DepartmentBodyRequest departmentBodyRequest) {
     Department department = departmentConverter.toEntity(departmentBodyRequest);
-    department.setCreatedAt(LocalDate.now());
-    department.setUpdatedAt(LocalDate.now());
     return departmentConverter.toDepartmentResponse(departmentRepository.save(department));
   }
 
   @Override
   @Transactional
   public DepartmentResponse update(Integer id, DepartmentBodyRequest departmentBodyRequestToUpdate) {
+    Department department = getDepartment(id);
     DepartmentResponse newDepartmentResponse = departmentConverter
-        .toUpdatedDepartmentDto(departmentBodyRequestToUpdate, getDepartment(id));
+        .toUpdatedDepartmentDto(departmentBodyRequestToUpdate, department);
     Department newDepartment = departmentConverter.toEntity(newDepartmentResponse);
-    newDepartment.setUpdatedAt(LocalDate.now());
     newDepartment.setId(id);
+    newDepartment.setCreatedAt(department.getCreatedAt());
+    newDepartment.setCreatedBy(department.getCreatedBy());
     return departmentConverter.toDepartmentResponse(departmentRepository.save(newDepartment));
   }
 
@@ -129,14 +141,25 @@ public class DepartmentServiceImpl implements DepartmentService {
   @Override
   @Transactional
   public DepartmentUsersResponse findAllUsersInDepartment(Integer idDep) {
-    return departmentConverter.toDepartmentsUsersResponse(departmentRepository.getById(idDep));
+    Department department = getDepartment(idDep);
+    if (departmentHasUser(idDep)) {
+      return departmentConverter.toDepartmentsUsersResponse(department);
+      } else throw new JwtAuthenticationException("You don't have permission for this action");
   }
-
 
   @Override
   @Transactional
   public DepartmentProjectsResponse findAllProjectsInDepartment(Integer idDep) {
-    return departmentConverter.toDepartmentProjectsResponse(departmentRepository.getById(idDep));
+    Department department = getDepartment(idDep);
+    if (departmentHasUser(idDep)) {
+      return departmentConverter.toDepartmentProjectsResponse(department);
+    } else throw new JwtAuthenticationException("You don't have permission for this action");
+  }
+
+  private boolean departmentHasUser(Integer idDep) {
+    UserResponse currentUser = userService.findUserByEmail(userService.getCurrentUser().getUsername());
+    Department department = departmentRepository.findDepartmentByEmployeesId(currentUser.getId()).orElseThrow(() -> new NotFoundException("You aren't a member of department"));
+    return department.getId() == idDep || Role.ADMIN.equals(currentUser.getRole());
   }
 
   private Department getDepartment(Integer id) {

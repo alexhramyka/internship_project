@@ -3,6 +3,7 @@ package com.leverx.internship.project.department.web.controller;
 import com.leverx.internship.project.config.H2ConfigTest;
 import com.leverx.internship.project.config.SpringConfig;
 import com.leverx.internship.project.config.WebConfig;
+import com.leverx.internship.project.user.repository.entity.User;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -20,6 +22,7 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -78,7 +81,10 @@ public class DepartmentControllerTest {
   }
 
   @Test
+  @WithMockUser(value = "mail@mail.ru")
   void createTestPositive() throws Exception {
+    Optional<User> userOptional = Optional.of(new User());
+    userOptional.get().setEmail("mail@mail.ru");
     String jsonString =
         new JSONObject()
             .put("name", "name1")
@@ -99,7 +105,10 @@ public class DepartmentControllerTest {
   }
 
   @Test
+  @WithMockUser(value = "mail@mail.ru")
   void updateTestPositive() throws Exception {
+    Optional<User> userOptional = Optional.of(new User());
+    userOptional.get().setEmail("mail@mail.ru");
     String jsonString =
         new JSONObject()
             .put("description", "new description").toString();
@@ -123,7 +132,10 @@ public class DepartmentControllerTest {
   }
 
   @Test
+  @WithMockUser(value = "mail@mail.ru")
   void addUserToDepartmentTestPositive() throws Exception {
+    Optional<User> userOptional = Optional.of(new User());
+    userOptional.get().setEmail("mail@mail.ru");
     final MockHttpServletResponse response =
         mockMvc
             .perform(
@@ -138,7 +150,10 @@ public class DepartmentControllerTest {
   }
 
   @Test
+  @WithMockUser(value = "mail1@mail.com")
   void addProjectToDepartmentTestPositive() throws Exception {
+    Optional<User> userOptional = Optional.of(new User());
+    userOptional.get().setEmail("mail1@mail.com");
     final MockHttpServletResponse response =
         mockMvc
             .perform(
@@ -153,7 +168,10 @@ public class DepartmentControllerTest {
   }
 
   @Test
+  @WithMockUser(value = "mail1@mail.com")
   void deleteProjectFromDepartmentTestPositive() throws Exception {
+    Optional<User> userOptional = Optional.of(new User());
+    userOptional.get().setEmail("mail1@mail.com");
     final MockHttpServletResponse response = mockMvc.perform(delete("/departments/{idDep}/projects/{idProj}", 3, 4)
             .accept(MediaType.APPLICATION_JSON))
         .andReturn().getResponse();

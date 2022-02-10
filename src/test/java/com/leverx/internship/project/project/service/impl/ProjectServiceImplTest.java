@@ -1,5 +1,6 @@
 package com.leverx.internship.project.project.service.impl;
 
+import com.leverx.internship.project.department.repository.DepartmentRepository;
 import com.leverx.internship.project.project.repository.ProjectRepository;
 import com.leverx.internship.project.project.repository.entity.Project;
 import com.leverx.internship.project.project.service.ProjectService;
@@ -23,7 +24,11 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.List;
+import java.util.Set;
+import java.util.Optional;
+import java.util.HashSet;
+import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -38,11 +43,12 @@ class ProjectServiceImplTest {
   private ProjectService projectServiceUnderTest;
   @Mock private ProjectConverter projectConverter;
   @Mock private UserConverter userConverter;
+  @Mock private DepartmentRepository departmentRepository;
 
   @BeforeEach
   public void init() {
     projectServiceUnderTest =
-        new ProjectServiceImpl(projectRepository, projectConverter, userService, userConverter);
+        new ProjectServiceImpl(projectRepository, projectConverter, userService, userConverter, departmentRepository);
   }
 
   @Test
@@ -223,7 +229,7 @@ class ProjectServiceImplTest {
     expected.setId(1);
     expected.setName("name");
     expected.setUsers(
-        Set.of(new UserResponse(1, "email@mail.ru", "password", "Ivan", "Ivanov", Role.ADMIN, true)));
+        Set.of(new UserResponse(1, "email@mail.ru", "password", "Ivan", "Ivanov",Role.ADMIN,   true)));
 
     User user = new User();
     user.setId(1);
@@ -235,7 +241,7 @@ class ProjectServiceImplTest {
     user.setRole(Role.ADMIN);
     user.setCreatedAt(LocalDate.of(2022, 2, 1));
     user.setUpdatedAt(LocalDate.of(2022, 2, 1));
-    user.setProjects(Set.of(new Project(1, "name", "description", LocalDate.of(2022, 2 ,1), LocalDate.of(2022, 2, 1) , LocalDate.of(2020, 1, 1), LocalDate.of(2020, 1, 1), 0, 0, Set.of(user))));
+    user.setProjects(Set.of(new Project(1, "name", "description", LocalDate.of(2022, 2 ,1), LocalDate.of(2022, 2, 1) , LocalDate.of(2020, 1, 1), LocalDate.of(2020, 1, 1), "mail", "mail", Set.of(user))));
 
     Optional<Project> projectOptional =
         Optional.of(
@@ -247,8 +253,8 @@ class ProjectServiceImplTest {
                 LocalDate.of(2022, 2, 1),
                 LocalDate.of(2022, 2, 1),
                 LocalDate.of(2022, 2, 1),
-                0,
-                0,
+                "mail",
+                "mail",
                 new HashSet<>()));
     projectOptional.get().getEmployees().add(user);
     when(projectRepository.findById(1)).thenReturn(projectOptional);
@@ -296,8 +302,8 @@ class ProjectServiceImplTest {
             LocalDate.of(2022, 2, 1),
             LocalDate.of(2022, 2, 1),
             LocalDate.of(2022, 2, 1),
-            0,
-            0,
+            "mail",
+            "mail",
             new HashSet<>());
     when(projectRepository.save(any(Project.class))).thenReturn(project);
 
@@ -344,8 +350,8 @@ class ProjectServiceImplTest {
                 LocalDate.of(2022, 2, 1),
                 LocalDate.of(2022, 2, 1),
                 LocalDate.of(2022, 2, 1),
-                0,
-                0,
+                "mail",
+                "mail",
                 Set.of(user)));
     when(projectRepository.findById(1)).thenReturn(projectOptional);
 
@@ -376,8 +382,8 @@ class ProjectServiceImplTest {
             LocalDate.of(2022, 2, 1),
             LocalDate.of(2022, 2, 1),
             LocalDate.of(2022, 2, 1),
-            0,
-            0,
+            "mail",
+            "mail",
             new HashSet<>());
     project.getEmployees().add(user2);
     when(projectRepository.save(any(Project.class))).thenReturn(project);
