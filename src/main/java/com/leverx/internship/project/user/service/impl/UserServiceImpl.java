@@ -1,5 +1,6 @@
 package com.leverx.internship.project.user.service.impl;
 
+import com.leverx.internship.project.exception.JwtAuthenticationException;
 import com.leverx.internship.project.security.model.Role;
 import com.leverx.internship.project.user.repository.UserRepository;
 import com.leverx.internship.project.user.repository.entity.User;
@@ -11,11 +12,15 @@ import com.leverx.internship.project.user.web.dto.request.UserParamRequest;
 import com.leverx.internship.project.user.web.dto.response.UserResponse;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
+
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
@@ -85,7 +90,25 @@ public class UserServiceImpl implements UserService {
     userRepository.deleteById(id);
   }
 
-  private User getUser(Integer id) {
+  @Transactional(readOnly = true)
+  @Override
+  public UserDetails getCurrentUser() {
+    Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    return Optional.of(((UserDetails)principal)).orElseThrow(() -> new JwtAuthenticationException("Authentication exception"));
+  }
+
+  @Transactional(readOnly = true)
+  @Override
+  public UserResponse findUserByEmail(String email) {
+    return userConverter.toUserResponse(
+        userRepository
+        .findUserByEmail(email)
+        .orElseThrow(() -> new NotFoundException("User with email: " + email + " doesn't exist")));
+  }
+
+  @Transactional(readOnly = true)
+  @Override
+  public User getUser(Integer id) {
     return userRepository
         .findById(id)
         .orElseThrow(() -> new NotFoundException("User with id: " + id + " doesn't exist"));

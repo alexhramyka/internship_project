@@ -24,7 +24,7 @@ public class UserConverter {
   public User toEntity(@NonNull UserBodyRequest userBodyRequest) {
     mapper.typeMap(UserBodyRequest.class, User.class)
         .addMappings(mapper -> mapper.skip(User::setPassword))
-        .setPostConverter(passwordConverter());
+        .setPostConverter(specifiedDataConverter());
     return mapper.map(userBodyRequest, User.class);
   }
 
@@ -39,6 +39,8 @@ public class UserConverter {
   }
 
   public User fromCsvToEntity(@NonNull CsvUser csvUser) {
+    mapper.typeMap(CsvUser.class, User.class)
+        .setPostConverter(csvUserPasswordDataConverter());
     return mapper.map(csvUser, User.class);
   }
 
@@ -86,9 +88,18 @@ public class UserConverter {
     }
   }
 
-  public Converter<UserBodyRequest, User> passwordConverter() {
+  public Converter<UserBodyRequest, User> specifiedDataConverter() {
     return mappingContext -> {
       UserBodyRequest source = mappingContext.getSource();
+      User destination = mappingContext.getDestination();
+      destination.setPassword(passwordEncoder.encode(source.getPassword()));
+      return mappingContext.getDestination();
+    };
+  }
+
+  public Converter<CsvUser, User> csvUserPasswordDataConverter() {
+    return mappingContext -> {
+      CsvUser source = mappingContext.getSource();
       User destination = mappingContext.getDestination();
       destination.setPassword(passwordEncoder.encode(source.getPassword()));
       return mappingContext.getDestination();
