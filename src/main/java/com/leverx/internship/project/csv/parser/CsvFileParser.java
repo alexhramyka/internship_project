@@ -17,15 +17,13 @@ public class CsvFileParser {
 
   public List<CsvUser> getUsersFromCsv(MultipartFile csvFile) {
     try (Reader reader = new BufferedReader(new InputStreamReader(csvFile.getInputStream()))) {
-      List<CsvUser> beans =
-          new CsvToBeanBuilder<CsvUser>(reader)
-              .withSeparator(',')
-              .withType(CsvUser.class)
-              .withIgnoreLeadingWhiteSpace(true)
-              .withIgnoreEmptyLine(true)
-              .build()
-              .parse();
-      return beans;
+      return new CsvToBeanBuilder<CsvUser>(reader)
+          .withSeparator(',')
+          .withType(CsvUser.class)
+          .withIgnoreLeadingWhiteSpace(true)
+          .withIgnoreEmptyLine(true)
+          .build()
+          .parse();
     } catch (IOException e) {
       throw new RuntimeException();
     }
