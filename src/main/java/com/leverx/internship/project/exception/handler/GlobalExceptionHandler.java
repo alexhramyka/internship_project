@@ -1,6 +1,7 @@
 package com.leverx.internship.project.exception.handler;
 
 import com.leverx.internship.project.exception.JwtAuthenticationException;
+import com.leverx.internship.project.exception.ReportNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,5 +33,11 @@ public class GlobalExceptionHandler {
     ErrorResponse errorResponse = new ErrorResponse(HttpStatus.FORBIDDEN,
         String.format("Error of authentication '%s'", ex.getMessage()));
     return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
+  }
+  @ExceptionHandler(ReportNotFoundException.class)
+  public ResponseEntity<ErrorResponse> reportNotFoundException(ReportNotFoundException ex) {
+    ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST,
+        String.format("Search report error '%s'", ex.getMessage()));
+    return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
   }
 }
