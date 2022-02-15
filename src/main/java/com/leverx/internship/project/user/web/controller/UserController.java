@@ -144,4 +144,9 @@ public class UserController {
       @Parameter(description = "Required user id", example = "1") @PathVariable("id") int id) {
     userService.delete(id);
   }
+
+  @GetMapping("/available")
+  public List<UserResponse> findAvailableEmployees() {
+    return userService.findAvailableEmployee();
+  }
 }

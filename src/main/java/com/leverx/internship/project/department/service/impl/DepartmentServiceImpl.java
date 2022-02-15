@@ -11,7 +11,6 @@ import com.leverx.internship.project.department.web.dto.response.DepartmentRespo
 import com.leverx.internship.project.department.web.dto.request.DepartmentParamRequest;
 import com.leverx.internship.project.department.web.dto.response.DepartmentUsersResponse;
 import com.leverx.internship.project.exception.JwtAuthenticationException;
-import com.leverx.internship.project.project.repository.entity.Project;
 import com.leverx.internship.project.project.service.ProjectService;
 import com.leverx.internship.project.project.web.dto.response.ProjectResponse;
 import com.leverx.internship.project.security.model.Role;

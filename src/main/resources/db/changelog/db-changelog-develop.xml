@@ -110,4 +110,11 @@
         <addForeignKeyConstraint baseTableName="department_has_projects" baseColumnNames="project_id" constraintName="depart_has_proj_project_id_fkey" referencedTableName="projects"
                                  referencedColumnNames="id" onDelete="CASCADE"/>
     </changeSet>
+
+    <changeSet id="Change_var_type_of_created/updated_by" author="Alex">
+        <modifyDataType tableName="projects" columnName="created_by" newDataType="varchar(55)"/>
+        <modifyDataType tableName="departments" columnName="created_by" newDataType="varchar(55)"/>
+        <modifyDataType columnName="updated_by" newDataType="varchar(55)" tableName="projects"/>
+        <modifyDataType columnName="updated_by" newDataType="varchar(55)" tableName="departments"/>
+    </changeSet>
 </databaseChangeLog>

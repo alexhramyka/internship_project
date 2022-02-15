@@ -22,7 +22,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   private final String[] LOGOUT_ENDPOINT = new String[] {"/api/auth/logout"};
   private final String[] PERMIT_ALL =
       new String[] {"/api/auth/login", "/api/swagger-ui/**", "/api/v3/api-docs"};
-  private final String[] WRITE_DELETE_USER_PERMISSION = new String[] {"/api/departments/**", "/api/projects/**"};
+  private final String[] WRITE_DELETE_USER_PERMISSION = new String[] {"/api/departments/**", "/api/projects/**", "/api/report/**"};
 
   @Override
   protected void configure(HttpSecurity http) throws Exception {
