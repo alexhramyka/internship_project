@@ -31,38 +31,47 @@ public class ReportController {
   @GetMapping("/workload")
   @ResponseStatus(HttpStatus.OK)
   @Operation(summary = "Downloading workload report")
-  @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok"),
-      @ApiResponse(responseCode = "500", description = "Internal server error")})
+  @ApiResponses(
+      value = {
+        @ApiResponse(responseCode = "200", description = "Ok"),
+        @ApiResponse(responseCode = "500", description = "Internal server error")
+      })
   public void downloadWorkloadReport(
       @Parameter(description = "Required month", name = "month")
-      @RequestParam(value = "month", required = false) String month, HttpServletResponse response) {
+          @RequestParam(value = "month", required = false)
+          String month,
+      HttpServletResponse response) {
     response.setContentType(EXCEL_XLSX_CONTENT_TYPE);
     response.setHeader(HttpHeaders.CONTENT_DISPOSITION, HEADER_ATTACHMENT);
     Workbook workbook = reportService.downloadWorkloadReport(month);
-    try (ServletOutputStream outputStream = response.getOutputStream()) {
-      workbook.write(outputStream);
-      workbook.close();
-    } catch (IOException e) {
-      throw new ReportNotFoundException(e.getMessage());
-    }
+    writeFile(workbook, response);
   }
 
   @GetMapping("/available")
   @ResponseStatus(HttpStatus.OK)
   @Operation(summary = "Downloading workload report")
-  @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "Ok"),
-      @ApiResponse(responseCode = "500", description = "Internal server error")})
+  @ApiResponses(
+      value = {
+        @ApiResponse(responseCode = "200", description = "Ok"),
+        @ApiResponse(responseCode = "500", description = "Internal server error")
+      })
   public void downloadAvailableEmployeeReport(
       @Parameter(description = "Required month", name = "month")
-      @RequestParam(value = "month", required = false) String month, HttpServletResponse response) {
+          @RequestParam(value = "month", required = false)
+          String month,
+      HttpServletResponse response) {
     response.setContentType(EXCEL_XLSX_CONTENT_TYPE);
     response.addHeader(HttpHeaders.CONTENT_DISPOSITION, HEADER_ATTACHMENT);
     Workbook workbook = reportService.downloadAvailableEmployeeReport(month);
+    writeFile(workbook, response);
+  }
+
+  private void writeFile(Workbook workbook, HttpServletResponse response) {
     try (ServletOutputStream outputStream = response.getOutputStream()) {
       workbook.write(outputStream);
       workbook.close();
     } catch (IOException e) {
-      throw new RuntimeException(e.getMessage());
+      throw new ReportNotFoundException(e.getMessage());
     }
   }
 }
