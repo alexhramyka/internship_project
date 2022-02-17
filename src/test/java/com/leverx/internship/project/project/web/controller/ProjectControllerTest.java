@@ -87,8 +87,8 @@ public class ProjectControllerTest {
         new JSONObject()
             .put("name", "name1")
             .put("description", "description")
-            .put("dateStart", "2022-02-04")
-            .put("dateEnd", "2022-02-04")
+            .put("dateStart", "2022-02-16T00:00:00.00Z")
+            .put("dateEnd", "2022-02-16T00:00:00.00Z")
             .toString();
     MockHttpServletResponse response = mockMvc
         .perform(
