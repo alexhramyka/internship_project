@@ -1,9 +1,9 @@
 package com.leverx.internship.project.config;
 
+import com.leverx.internship.project.auditor.impl.AuditorAwareImpl;
 import java.util.Properties;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-import com.leverx.internship.project.auditor.impl.AuditorAwareImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;

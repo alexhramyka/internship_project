@@ -23,12 +23,11 @@ public class ReportServiceImpl implements ReportService {
   private static final String WORKLOAD_REPORT_FILE_NAME_PATTERN =
       "^Workload_by_department-%s.xlsx$";
   private static final String AVAILABLE_EMPLOYEE_REPORT_FILE_NAME_PATTERN =
-      "^Available_employees-%s.xlsx$";
+      "^Available_employee-%s.xlsx$";
 
   @Override
   @Transactional(readOnly = true)
   public XSSFWorkbook downloadWorkloadReport(String monthString) {
-    monthString = monthString.toUpperCase();
     ReportType reportType = ReportType.WorkloadReport;
     try {
       return new XSSFWorkbook(findReportByMonth(monthString, reportType));
@@ -40,7 +39,6 @@ public class ReportServiceImpl implements ReportService {
   @Override
   @Transactional(readOnly = true)
   public XSSFWorkbook downloadAvailableEmployeeReport(String monthString) {
-    monthString = monthString.toUpperCase();
     ReportType reportType = ReportType.AvailableEmployeeReport;
     try {
       return new XSSFWorkbook(findReportByMonth(monthString, reportType));
@@ -54,6 +52,7 @@ public class ReportServiceImpl implements ReportService {
     if (monthString == null) {
       month = LocalDate.now().getMonth();
     } else {
+      monthString = monthString.toUpperCase();
       month = Month.valueOf(monthString);
     }
     File[] files = new File(reportDirectory).listFiles();
@@ -62,17 +61,23 @@ public class ReportServiceImpl implements ReportService {
     }
     if (ReportType.WorkloadReport.equals(reportType)) {
       return Arrays.stream(files)
-          .filter(file ->{
+          .filter(file -> {
             String name = file.getName();
-            return name.matches(String.format(WORKLOAD_REPORT_FILE_NAME_PATTERN, month.name().toUpperCase())); })
+            return name.matches(
+                String.format(WORKLOAD_REPORT_FILE_NAME_PATTERN, month.name().toUpperCase()));
+          })
           .findFirst()
           .orElseThrow(() -> new ReportNotFoundException("Such file doesn't exist"));
     } else if (ReportType.AvailableEmployeeReport.equals(reportType)) {
       return Arrays.stream(files)
           .filter(
-              file -> file.getName().matches(String.format(AVAILABLE_EMPLOYEE_REPORT_FILE_NAME_PATTERN, month.name().toUpperCase())))
+              file -> file.getName().matches(
+                  String.format(AVAILABLE_EMPLOYEE_REPORT_FILE_NAME_PATTERN,
+                      month.name().toUpperCase())))
           .findFirst()
           .orElseThrow(() -> new ReportNotFoundException("Such file doesn't exist"));
-    } else throw new ReportNotFoundException("Report with this type doesn't exist");
+    } else {
+      throw new ReportNotFoundException("Report with this type doesn't exist");
+    }
   }
 }

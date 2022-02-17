@@ -6,9 +6,9 @@ import com.leverx.internship.project.department.service.DepartmentService;
 import com.leverx.internship.project.department.service.filter.DepartmentSpecification;
 import com.leverx.internship.project.department.web.converter.DepartmentConverter;
 import com.leverx.internship.project.department.web.dto.request.DepartmentBodyRequest;
+import com.leverx.internship.project.department.web.dto.request.DepartmentParamRequest;
 import com.leverx.internship.project.department.web.dto.response.DepartmentProjectsResponse;
 import com.leverx.internship.project.department.web.dto.response.DepartmentResponse;
-import com.leverx.internship.project.department.web.dto.request.DepartmentParamRequest;
 import com.leverx.internship.project.department.web.dto.response.DepartmentUsersResponse;
 import com.leverx.internship.project.exception.JwtAuthenticationException;
 import com.leverx.internship.project.project.service.ProjectService;
@@ -16,6 +16,8 @@ import com.leverx.internship.project.project.web.dto.response.ProjectResponse;
 import com.leverx.internship.project.security.model.Role;
 import com.leverx.internship.project.user.service.UserService;
 import com.leverx.internship.project.user.web.dto.response.UserResponse;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
@@ -25,12 +27,11 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @AllArgsConstructor
 public class DepartmentServiceImpl implements DepartmentService {
+
   private final DepartmentRepository departmentRepository;
   private final DepartmentConverter departmentConverter;
   private final UserService userService;
@@ -38,10 +39,12 @@ public class DepartmentServiceImpl implements DepartmentService {
 
   @Override
   @Transactional(readOnly = true)
-  public List<DepartmentResponse> findAll(int page, int size, DepartmentParamRequest departmentParamRequest) {
+  public List<DepartmentResponse> findAll(int page, int size,
+      DepartmentParamRequest departmentParamRequest) {
     Specification<Department> spec = Specification.where(
-        DepartmentSpecification.departmentParamHasDescription(departmentParamRequest.getDescription()).and(
-        DepartmentSpecification.departmentParamHasName(departmentParamRequest.getName())));
+        DepartmentSpecification.departmentParamHasDescription(
+            departmentParamRequest.getDescription()).and(
+            DepartmentSpecification.departmentParamHasName(departmentParamRequest.getName())));
     Pageable paging = PageRequest.of(page, size);
     Page<Department> departmentPage = departmentRepository.findAll(spec, paging);
     List<DepartmentResponse> departmentsDto = new ArrayList<>();
@@ -57,9 +60,9 @@ public class DepartmentServiceImpl implements DepartmentService {
     UserResponse userResponse =
         userService.findUserByEmail(userService.getCurrentUser().getUsername());
     if (departmentConverter
-            .toDepartmentsUsersResponse(department)
-            .getEmployeesDto()
-            .contains(userResponse)
+        .toDepartmentsUsersResponse(department)
+        .getEmployeesDto()
+        .contains(userResponse)
         || Role.ADMIN.equals(userResponse.getRole())) {
       return departmentConverter.toDepartmentResponse(department);
     }
@@ -75,7 +78,8 @@ public class DepartmentServiceImpl implements DepartmentService {
 
   @Override
   @Transactional
-  public DepartmentResponse update(Integer id, DepartmentBodyRequest departmentBodyRequestToUpdate) {
+  public DepartmentResponse update(Integer id,
+      DepartmentBodyRequest departmentBodyRequestToUpdate) {
     Department department = getDepartment(id);
     DepartmentResponse newDepartmentResponse = departmentConverter
         .toUpdatedDepartmentDto(departmentBodyRequestToUpdate, department);
@@ -105,12 +109,16 @@ public class DepartmentServiceImpl implements DepartmentService {
           .toUpdatedEntity(departmentUsersResponse, getDepartment(idDepartment));
       return departmentConverter.toDepartmentsUsersResponse(
           departmentRepository.save(department));
-    } else throw new DataIntegrityViolationException("User with id " + user.getId() + " already in this department");
+    } else {
+      throw new DataIntegrityViolationException("User with id " + user.getId()
+          + " already in this department");
+    }
   }
 
   @Override
   @Transactional
-  public DepartmentProjectsResponse addProjectToDepartment(Integer idDepartment, Integer idProject) {
+  public DepartmentProjectsResponse addProjectToDepartment(Integer idDepartment,
+      Integer idProject) {
     DepartmentProjectsResponse departmentProjectsResponse = departmentConverter
         .toDepartmentProjectsResponse(getDepartment(idDepartment));
     ProjectResponse project = projectService.findById(idProject);
@@ -120,7 +128,10 @@ public class DepartmentServiceImpl implements DepartmentService {
           .toUpdatedEntity(departmentProjectsResponse, getDepartment(idDepartment));
       return departmentConverter.toDepartmentProjectsResponse(
           departmentRepository.save(department));
-    } else throw new DataIntegrityViolationException("Project with id " + project.getId() + " already in this department");
+    } else {
+      throw new DataIntegrityViolationException(
+          "Project with id " + project.getId() + " already in this department");
+    }
   }
 
   @Override
@@ -134,7 +145,11 @@ public class DepartmentServiceImpl implements DepartmentService {
       Department department = departmentConverter
           .toUpdatedEntity(departmentProjectsResponse, getDepartment(idDepartment));
       departmentRepository.save(department);
-    } else throw new NotFoundException("Project with id " + idProject + " doesn't  exists in department with id " + idDepartment);
+    } else {
+      throw new NotFoundException(
+          "Project with id " + idProject + " doesn't  exists in department with id "
+              + idDepartment);
+    }
   }
 
   @Override
@@ -143,7 +158,9 @@ public class DepartmentServiceImpl implements DepartmentService {
     Department department = getDepartment(idDep);
     if (departmentHasUser(idDep)) {
       return departmentConverter.toDepartmentsUsersResponse(department);
-      } else throw new JwtAuthenticationException("You don't have permission for this action");
+    } else {
+      throw new JwtAuthenticationException("You don't have permission for this action");
+    }
   }
 
   @Override
@@ -152,12 +169,16 @@ public class DepartmentServiceImpl implements DepartmentService {
     Department department = getDepartment(idDep);
     if (departmentHasUser(idDep)) {
       return departmentConverter.toDepartmentProjectsResponse(department);
-    } else throw new JwtAuthenticationException("You don't have permission for this action");
+    } else {
+      throw new JwtAuthenticationException("You don't have permission for this action");
+    }
   }
 
   private boolean departmentHasUser(Integer idDep) {
-    UserResponse currentUser = userService.findUserByEmail(userService.getCurrentUser().getUsername());
-    Department department = departmentRepository.findDepartmentByEmployeesId(currentUser.getId()).orElseThrow(() -> new NotFoundException("You aren't a member of department"));
+    UserResponse currentUser = userService.findUserByEmail(
+        userService.getCurrentUser().getUsername());
+    Department department = departmentRepository.findDepartmentByEmployeesId(currentUser.getId())
+        .orElseThrow(() -> new NotFoundException("You aren't a member of department"));
     return department.getId() == idDep || Role.ADMIN.equals(currentUser.getRole());
   }
 
