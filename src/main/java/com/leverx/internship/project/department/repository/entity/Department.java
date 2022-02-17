@@ -2,21 +2,21 @@ package com.leverx.internship.project.department.repository.entity;
 
 import com.leverx.internship.project.project.repository.entity.Project;
 import com.leverx.internship.project.user.repository.entity.User;
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.List;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.OneToMany;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.EntityListeners;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,8 +35,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class Department {
+
   @Id
-  @SequenceGenerator(sequenceName = "department_id_seq", name = "department_id_seq", allocationSize = 1)
+  @SequenceGenerator(sequenceName = "department_id_seq", name = "department_id_seq",
+      allocationSize = 1)
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "department_id_seq")
   private int id;
 
@@ -48,7 +50,7 @@ public class Department {
 
   @Column(name = "created_at")
   @CreatedDate
-  private LocalDate createdAt;
+  private Instant createdAt;
 
   @Column(name = "created_by")
   @CreatedBy
@@ -56,7 +58,7 @@ public class Department {
 
   @Column(name = "updated_at")
   @LastModifiedDate
-  private LocalDate updatedAt;
+  private Instant updatedAt;
 
   @Column(name = "updated_by")
   @LastModifiedBy

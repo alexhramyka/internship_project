@@ -2,9 +2,8 @@ package com.leverx.internship.project.csv.model;
 
 import com.leverx.internship.project.security.model.Role;
 import com.opencsv.bean.CsvBindByName;
+import java.time.Instant;
 import lombok.Data;
-
-import java.time.LocalDate;
 
 @Data
 public class CsvUser {
@@ -26,6 +25,6 @@ public class CsvUser {
   @CsvBindByName(column = "ACTIVE", required = true)
   private boolean active;
 
-  private LocalDate createdAt = LocalDate.now();
-  private LocalDate updatedAt = LocalDate.now();
+  private Instant createdAt;
+  private Instant updatedAt;
 }

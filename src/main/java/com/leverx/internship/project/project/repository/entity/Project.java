@@ -1,10 +1,11 @@
 package com.leverx.internship.project.project.repository.entity;
 
 import com.leverx.internship.project.user.repository.entity.User;
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -13,7 +14,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.EntityListeners;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,6 +32,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @AllArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class Project {
+
   @Id
   @SequenceGenerator(name = "project_id_seq", sequenceName = "project_id_seq", allocationSize = 1)
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "project_id_seq")
@@ -44,18 +45,18 @@ public class Project {
   private String description;
 
   @Column(name = "date_start", nullable = false)
-  private LocalDate dateStart;
+  private Instant dateStart;
 
   @Column(name = "date_end", nullable = false)
-  private LocalDate dateEnd;
+  private Instant dateEnd;
 
   @Column(name = "created_at", nullable = false)
   @CreatedDate
-  private LocalDate createdAt;
+  private Instant createdAt;
 
   @Column(name = "updated_at", nullable = false)
   @LastModifiedDate
-  private LocalDate updatedAt;
+  private Instant updatedAt;
 
   @Column(name = "created_by", nullable = false)
   @CreatedBy

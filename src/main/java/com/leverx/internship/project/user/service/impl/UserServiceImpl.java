@@ -12,13 +12,13 @@ import com.leverx.internship.project.user.web.converter.UserConverter;
 import com.leverx.internship.project.user.web.dto.request.UserBodyRequest;
 import com.leverx.internship.project.user.web.dto.request.UserParamRequest;
 import com.leverx.internship.project.user.web.dto.response.UserResponse;
-import java.time.LocalDate;
+import java.time.Clock;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,12 +30,23 @@ import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 
 @Service
-@AllArgsConstructor
 public class UserServiceImpl implements UserService {
 
   private final UserRepository userRepository;
   private final UserConverter userConverter;
   private final ProjectRepository projectRepository;
+  private static final int LIMIT_OF_PROJECTS = 2;
+  private final Instant dateNow;
+
+  @Autowired
+  public UserServiceImpl(UserRepository userRepository,
+      UserConverter userConverter,
+      ProjectRepository projectRepository, Clock clock) {
+    this.userRepository = userRepository;
+    this.userConverter = userConverter;
+    this.projectRepository = projectRepository;
+    this.dateNow = clock.instant();
+  }
 
   @Transactional(readOnly = true)
   @Override
@@ -71,8 +82,6 @@ public class UserServiceImpl implements UserService {
   public UserResponse create(UserBodyRequest userDto) {
     User user = userConverter.toEntity(userDto);
     user.setRole(Role.valueOf(userDto.getRole().toString()));
-    user.setCreatedAt(LocalDate.now());
-    user.setUpdatedAt(LocalDate.now());
     return userConverter.toUserResponse(userRepository.save(user));
   }
 
@@ -84,7 +93,6 @@ public class UserServiceImpl implements UserService {
         userConverter.toEntity(userConverter.toUpdatedUserResponse(userBodyRequest, user));
     newUser.setCreatedAt(user.getCreatedAt());
     newUser.setId(user.getId());
-    newUser.setUpdatedAt(LocalDate.now());
     return userConverter.toUserResponse(userRepository.save(newUser));
   }
 
@@ -117,17 +125,16 @@ public class UserServiceImpl implements UserService {
   @Transactional(readOnly = true)
   public List<UserResponse> findAvailableEmployee() {
     List<UserResponse> userResponseList =
-        userConverter.userListToUserResponseList(userRepository.findAll().stream().filter(User::isActive).collect(Collectors.toList()));
+        userConverter.userListToUserResponseList(
+            userRepository.findAll().stream().filter(User::isActive).collect(Collectors.toList()));
     List<UserResponse> availableEmployeeList = new ArrayList<>();
-    int limitOfProjects = 2;
-    LocalDate dateNow = LocalDate.now();
     userResponseList.forEach(
         userResponse -> {
           List<Project> projects =
               new ArrayList<>(
                   projectRepository.findProjectsByEmployeesIdAndDateEndAfter(
                       userResponse.getId(), dateNow));
-          if (projects.size() < limitOfProjects) {
+          if (projects.size() < LIMIT_OF_PROJECTS) {
             availableEmployeeList.add(userResponse);
           }
         });
