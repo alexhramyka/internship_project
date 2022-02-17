@@ -1,5 +1,8 @@
 package com.leverx.internship.project.project.service.impl;
 
+import com.leverx.internship.project.department.repository.DepartmentRepository;
+import com.leverx.internship.project.department.repository.entity.Department;
+import com.leverx.internship.project.exception.JwtAuthenticationException;
 import com.leverx.internship.project.project.repository.ProjectRepository;
 import com.leverx.internship.project.project.repository.entity.Project;
 import com.leverx.internship.project.project.service.ProjectService;
@@ -9,10 +12,10 @@ import com.leverx.internship.project.project.web.dto.request.ProjectBodyRequest;
 import com.leverx.internship.project.project.web.dto.request.ProjectParamRequest;
 import com.leverx.internship.project.project.web.dto.response.ProjectResponse;
 import com.leverx.internship.project.project.web.dto.response.ProjectUsersResponse;
+import com.leverx.internship.project.security.model.Role;
 import com.leverx.internship.project.user.service.UserService;
 import com.leverx.internship.project.user.web.converter.UserConverter;
 import com.leverx.internship.project.user.web.dto.response.UserResponse;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -33,6 +36,7 @@ public class ProjectServiceImpl implements ProjectService {
   private final ProjectConverter projectConverter;
   private final UserService userService;
   private final UserConverter userConverter;
+  private final DepartmentRepository departmentRepository;
 
   @Transactional(readOnly = true)
   @Override
@@ -52,15 +56,27 @@ public class ProjectServiceImpl implements ProjectService {
   @Override
   public ProjectResponse findById(Integer id) {
     Project project = getProject(id);
-    return projectConverter.toProjectResponse(project);
+    UserResponse userResponse =
+        userService.findUserByEmail(userService.getCurrentUser().getUsername());
+    if (projectConverter.toProjectUsersResponse(project).getUsers().contains(userResponse)
+        || Role.ADMIN.equals(userResponse.getRole())) {
+      return projectConverter.toProjectResponse(project);
+    } else if (Role.LEAD.equals(userResponse.getRole())) {
+      Department department =
+          departmentRepository
+              .findDepartmentByEmployeesId(userResponse.getId())
+              .orElseThrow(() -> new NotFoundException("You aren't member of any department"));
+      if (department.getProjects().contains(project)) {
+        return projectConverter.toProjectResponse(project);
+      }
+    }
+    throw new JwtAuthenticationException("You don't have permission for this action");
   }
 
   @Transactional
   @Override
   public ProjectResponse create(ProjectBodyRequest projectBodyRequest) {
     Project project = projectConverter.toEntity(projectBodyRequest);
-    project.setCreatedAt(LocalDate.now());
-    project.setUpdatedAt(LocalDate.now());
     return projectConverter.toProjectResponse(projectRepository.save(project));
   }
 
@@ -71,9 +87,9 @@ public class ProjectServiceImpl implements ProjectService {
     Project newProject =
         projectConverter.toEntity(
             projectConverter.toUpdatedProjectResponse(projectBodyRequestToUpdate, project));
-    newProject.setCreatedAt(project.getCreatedAt());
-    newProject.setUpdatedAt(LocalDate.now());
     newProject.setId(project.getId());
+    newProject.setCreatedAt(project.getCreatedAt());
+    newProject.setCreatedBy(project.getCreatedBy());
     return projectConverter.toProjectResponse(projectRepository.save(newProject));
   }
 

@@ -1,5 +1,6 @@
 package com.leverx.internship.project.user.web.converter;
 
+import com.leverx.internship.project.csv.model.CsvUser;
 import com.leverx.internship.project.user.repository.entity.User;
 import com.leverx.internship.project.user.web.dto.request.UserBodyRequest;
 import com.leverx.internship.project.user.web.dto.response.UserResponse;
@@ -9,15 +10,21 @@ import java.util.List;
 import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
+import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 @Component
 @AllArgsConstructor
 public class UserConverter {
   private final ModelMapper mapper;
+  private final PasswordEncoder passwordEncoder;
 
   public User toEntity(@NonNull UserBodyRequest userBodyRequest) {
+    mapper.typeMap(UserBodyRequest.class, User.class)
+        .addMappings(mapper -> mapper.skip(User::setPassword))
+        .setPostConverter(specifiedDataConverter());
     return mapper.map(userBodyRequest, User.class);
   }
 
@@ -29,6 +36,12 @@ public class UserConverter {
     UserResponse userResponse = toUserResponse(user);
     mapper.map(userReqToUpdate, userResponse);
     return userResponse;
+  }
+
+  public User fromCsvToEntity(@NonNull CsvUser csvUser) {
+    mapper.typeMap(CsvUser.class, User.class)
+        .setPostConverter(csvUserPasswordDataConverter());
+    return mapper.map(csvUser, User.class);
   }
 
   public UserResponse toUserResponse(@NonNull User user) {
@@ -73,5 +86,23 @@ public class UserConverter {
     } else {
       return new HashSet<>();
     }
+  }
+
+  public Converter<UserBodyRequest, User> specifiedDataConverter() {
+    return mappingContext -> {
+      UserBodyRequest source = mappingContext.getSource();
+      User destination = mappingContext.getDestination();
+      destination.setPassword(passwordEncoder.encode(source.getPassword()));
+      return mappingContext.getDestination();
+    };
+  }
+
+  public Converter<CsvUser, User> csvUserPasswordDataConverter() {
+    return mappingContext -> {
+      CsvUser source = mappingContext.getSource();
+      User destination = mappingContext.getDestination();
+      destination.setPassword(passwordEncoder.encode(source.getPassword()));
+      return mappingContext.getDestination();
+    };
   }
 }

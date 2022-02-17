@@ -31,7 +31,7 @@ public class UserSpecification {
     return (user, criteriaQuery, criteriaBuilder) -> {
       if (lastName != null) {
         return criteriaBuilder.like(
-            criteriaBuilder.lower(user.get("firstName")), "%" + lastName.toLowerCase() + "%");
+            criteriaBuilder.lower(user.get("lastName")), "%" + lastName.toLowerCase() + "%");
       } else {
         return criteriaBuilder.and();
       }

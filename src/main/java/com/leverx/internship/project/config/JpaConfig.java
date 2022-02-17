@@ -3,11 +3,14 @@ package com.leverx.internship.project.config;
 import java.util.Properties;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+import com.leverx.internship.project.auditor.impl.AuditorAwareImpl;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.data.domain.AuditorAware;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -21,6 +24,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement
 @EntityScan(basePackages = "com.leverx.internship.project")
 @EnableJpaRepositories(basePackages = "com.leverx.internship.project")
+@EnableJpaAuditing(auditorAwareRef = "auditorProvider")
 @PropertySource("classpath:application.properties")
 public class JpaConfig {
 
@@ -81,6 +85,11 @@ public class JpaConfig {
     JpaTransactionManager transactionManager = new JpaTransactionManager();
     transactionManager.setEntityManagerFactory(entityManagerFactory);
     return transactionManager;
+  }
+
+  @Bean
+  AuditorAware<String> auditorProvider() {
+    return new AuditorAwareImpl();
   }
 
   private Properties hibernateProperties() {

@@ -2,7 +2,7 @@ package com.leverx.internship.project.user.repository.entity;
 
 import com.leverx.internship.project.department.repository.entity.Department;
 import com.leverx.internship.project.project.repository.entity.Project;
-import com.leverx.internship.project.security.Role;
+import com.leverx.internship.project.security.model.Role;
 import java.time.LocalDate;
 import java.util.Set;
 import javax.persistence.Column;
