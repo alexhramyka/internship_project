@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -20,11 +21,11 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 @ExtendWith({MockitoExtension.class, SpringExtension.class})
 @ContextConfiguration(classes = {SpringConfig.class, WebConfig.class, H2ConfigTest.class})
@@ -48,7 +49,8 @@ public class UserControllerTest {
   }
 
   @Test
-  void getAllUsersByFirstNameFieldTestPositive() throws Exception {
+  @WithMockUser(value = "mail@mail.ru")
+  void getAllUsersByFirstNameFieldTestPositive_ShouldReturnOk() throws Exception {
     MockHttpServletResponse response = mockMvc
         .perform(
             get("/users")
@@ -59,13 +61,12 @@ public class UserControllerTest {
         .andReturn()
         .getResponse();
 
-    System.out.println(response.getContentAsString());
-
     assertEquals(HttpStatus.OK.value(), response.getStatus());
   }
 
   @Test
-  void findUserByIdTestPositive() throws Exception {
+  @WithMockUser(value = "mail@mail.ru")
+  void findUserByIdTestPositive_ShouldReturnOk() throws Exception {
     MockHttpServletResponse response = mockMvc
         .perform(
             get("/users/{id}", 2)
@@ -75,13 +76,12 @@ public class UserControllerTest {
         .andReturn()
         .getResponse();
 
-    System.out.println(response.getContentAsString());
-
     assertEquals(HttpStatus.OK.value(), response.getStatus());
   }
 
   @Test
-  void createTestPositive() throws Exception {
+  @WithMockUser(value = "mail@mail.ru")
+  void createTestPositive_ShouldReturnCreated() throws Exception {
     String jsonString =
         new JSONObject()
             .put("firstName", "User4")
@@ -100,13 +100,12 @@ public class UserControllerTest {
         .andReturn()
         .getResponse();
 
-    System.out.println(response.getContentAsString());
-
     assertEquals(HttpStatus.CREATED.value(), response.getStatus());
   }
 
   @Test
-  void updateTestPositive() throws Exception {
+  @WithMockUser(value = "mail@mail.ru")
+  void updateTestPositive_ShouldReturnOk() throws Exception {
     String jsonString =
         new JSONObject()
             .put("firstName", "UserUpdated").toString();
@@ -115,18 +114,16 @@ public class UserControllerTest {
             .accept(MediaType.APPLICATION_JSON))
         .andReturn().getResponse();
 
-    System.out.println(response.getContentAsString());
-
     assertEquals(HttpStatus.OK.value(), response.getStatus());
   }
 
   @Test
-  void deleteTestPositive() throws Exception {
+  @WithMockUser(value = "mail@mail.ru")
+  void deleteTestPositive_ShouldReturnNoContent() throws Exception {
     final MockHttpServletResponse response = mockMvc.perform(delete("/users/{id}", 4)
             .accept(MediaType.APPLICATION_JSON))
         .andReturn().getResponse();
 
-    assertEquals(HttpStatus.NO_CONTENT.value(), response.getStatus()) ;
+    assertEquals(HttpStatus.NO_CONTENT.value(), response.getStatus());
   }
-
 }

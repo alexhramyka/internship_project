@@ -4,7 +4,8 @@ import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public enum ReportType {
-  WorkloadReport(new String[] {"Department", "Employee full name", "Project", "Date start", "Date end"},
+  WorkloadReport(new String[] {"Department", "Employee full name", "Project", "Date start",
+      "Date end"},
       "Workload report"),
   AvailableEmployeeReport(new String[] {"Department", "Employee full name", "Project", "Date end"},
       "Available employee report");

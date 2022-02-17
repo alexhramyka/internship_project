@@ -24,8 +24,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 @ExtendWith({MockitoExtension.class, SpringExtension.class})
 @ContextConfiguration(classes = {SpringConfig.class, WebConfig.class, H2ConfigTest.class})
@@ -49,7 +51,7 @@ public class ProjectControllerTest {
   }
 
   @Test
-  void getAllProjectsTestPositive() throws Exception {
+  void getAllProjectsTest_ShouldReturnOk() throws Exception {
     MockHttpServletResponse response = mockMvc
         .perform(
             get("/projects")
@@ -59,38 +61,34 @@ public class ProjectControllerTest {
         .andReturn()
         .getResponse();
 
-    System.out.println(response.getContentAsString());
-
     assertEquals(HttpStatus.OK.value(), response.getStatus());
   }
 
   @Test
-  void findProjectByIdTestPositive() throws Exception {
+  @WithMockUser(value = "mail1@mail.com")
+  void findProjectByIdTest_ShouldReturnOk() throws Exception {
     MockHttpServletResponse response = mockMvc
         .perform(
-            get("/departments/{id}", 2)
+            get("/projects/{id}", 3)
                 .param("size", "3")
                 .param("page", "0")
                 .accept(MediaType.APPLICATION_JSON))
         .andReturn()
         .getResponse();
-
-    System.out.println(response.getContentAsString());
-
     assertEquals(HttpStatus.OK.value(), response.getStatus());
   }
 
   @Test
   @WithMockUser(value = "mail@mail.ru")
-  void createTestPositive() throws Exception {
+  void createTest_ShouldReturnCreated() throws Exception {
     Optional<User> userOptional = Optional.of(new User());
     userOptional.get().setEmail("mail@mail.ru");
     String jsonString =
         new JSONObject()
             .put("name", "name1")
             .put("description", "description")
-            .put("dateStart", "2022-02-04")
-            .put("dateEnd", "2022-02-04")
+            .put("dateStart", "2022-02-16T00:00:00.00Z")
+            .put("dateEnd", "2022-02-16T00:00:00.00Z")
             .toString();
     MockHttpServletResponse response = mockMvc
         .perform(
@@ -101,14 +99,12 @@ public class ProjectControllerTest {
         .andReturn()
         .getResponse();
 
-    System.out.println(response.getContentAsString());
-
     assertEquals(HttpStatus.CREATED.value(), response.getStatus());
   }
 
   @Test
   @WithMockUser(value = "mail@mail.ru")
-  void updateTestPositive() throws Exception {
+  void updateTest_ShouldReturnOk() throws Exception {
     Optional<User> userOptional = Optional.of(new User());
     userOptional.get().setEmail("mail@mail.ru");
     String jsonString =
@@ -119,13 +115,11 @@ public class ProjectControllerTest {
             .accept(MediaType.APPLICATION_JSON))
         .andReturn().getResponse();
 
-    System.out.println(response.getContentAsString());
-
     assertEquals(HttpStatus.OK.value(), response.getStatus());
   }
 
   @Test
-  void deleteTestPositive() throws Exception {
+  void deleteTest_ShouldReturnNoContent() throws Exception {
     final MockHttpServletResponse response = mockMvc.perform(delete("/projects/{id}", 4)
             .accept(MediaType.APPLICATION_JSON))
         .andReturn().getResponse();
@@ -135,7 +129,7 @@ public class ProjectControllerTest {
 
   @WithMockUser(value = "mail@mail.ru")
   @Test
-  void addUserToProjectTestPositive() throws Exception {
+  void addUserToProjectTest_ShouldReturnCreated() throws Exception {
     Optional<User> userOptional = Optional.of(new User());
     userOptional.get().setEmail("mail@mail.ru");
     final MockHttpServletResponse response =
@@ -146,21 +140,17 @@ public class ProjectControllerTest {
             .andReturn()
             .getResponse();
 
-    System.out.println(response.getContentAsString());
-
     assertEquals(HttpStatus.CREATED.value(), response.getStatus());
   }
 
   @Test
   @WithMockUser(value = "mail@mail.ru")
-  void deleteUserFromProjectTestPositive() throws Exception {
+  void deleteUserFromProjectTest_ShouldReturnNoContent() throws Exception {
     Optional<User> userOptional = Optional.of(new User());
     userOptional.get().setEmail("mail@mail.ru");
     final MockHttpServletResponse response = mockMvc.perform(delete("/projects/{idProjects}/users/{idUsers}", 4, 3)
             .accept(MediaType.APPLICATION_JSON))
         .andReturn().getResponse();
-
-    System.out.println(response.getContentAsString());
 
     assertEquals(HttpStatus.NO_CONTENT.value(), response.getStatus());
   }

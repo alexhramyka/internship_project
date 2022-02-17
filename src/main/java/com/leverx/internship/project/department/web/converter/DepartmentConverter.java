@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 @Component
 @AllArgsConstructor
 public class DepartmentConverter {
+
   private final ModelMapper mapper;
   private final UserConverter userConverter;
   private final ProjectConverter projectConverter;
@@ -27,15 +28,17 @@ public class DepartmentConverter {
   public Department toEntity(@NonNull DepartmentBodyRequest departmentBodyRequest) {
     return mapper.map(departmentBodyRequest, Department.class);
   }
-  public DepartmentResponse toUpdatedDepartmentDto(@NonNull DepartmentBodyRequest departmentBodyRequestUpdate,
-                                                   Department department) {
+
+  public DepartmentResponse toUpdatedDepartmentDto(
+      @NonNull DepartmentBodyRequest departmentBodyRequestUpdate,
+      Department department) {
     DepartmentResponse departmentResponse = toDepartmentResponse(department);
     mapper.map(departmentBodyRequestUpdate, departmentResponse);
     return departmentResponse;
   }
 
   public Department toUpdatedEntity(@NonNull DepartmentUsersResponse departmentBodyRequestUpdate,
-                                    Department department) {
+      Department department) {
     mapper.typeMap(DepartmentUsersResponse.class, Department.class)
         .setPostConverter(usersDtoListToUsersListConverter());
     mapper.map(departmentBodyRequestUpdate, department);
@@ -43,7 +46,7 @@ public class DepartmentConverter {
   }
 
   public Department toUpdatedEntity(@NonNull DepartmentProjectsResponse departmentProjectsResponse,
-                                    Department department) {
+      Department department) {
     mapper.typeMap(DepartmentProjectsResponse.class, Department.class)
         .setPostConverter(projectsDtoSetToProjectsSetConverter());
     mapper.map(departmentProjectsResponse, department);
@@ -97,9 +100,9 @@ public class DepartmentConverter {
     return mappingContext -> {
       DepartmentProjectsResponse source = mappingContext.getSource();
       Department destination = mappingContext.getDestination();
-      destination.setProjects(projectConverter.projectsRespListToProjectList(source.getProjectsDto()));
+      destination.setProjects(
+          projectConverter.projectsRespListToProjectList(source.getProjectsDto()));
       return mappingContext.getDestination();
     };
   }
-
 }

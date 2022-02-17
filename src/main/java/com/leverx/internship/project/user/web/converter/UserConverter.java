@@ -4,6 +4,7 @@ import com.leverx.internship.project.csv.model.CsvUser;
 import com.leverx.internship.project.user.repository.entity.User;
 import com.leverx.internship.project.user.web.dto.request.UserBodyRequest;
 import com.leverx.internship.project.user.web.dto.response.UserResponse;
+import java.time.Clock;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -18,8 +19,10 @@ import org.springframework.stereotype.Component;
 @Component
 @AllArgsConstructor
 public class UserConverter {
+
   private final ModelMapper mapper;
   private final PasswordEncoder passwordEncoder;
+  private final Clock clock;
 
   public User toEntity(@NonNull UserBodyRequest userBodyRequest) {
     mapper.typeMap(UserBodyRequest.class, User.class)
@@ -40,7 +43,7 @@ public class UserConverter {
 
   public User fromCsvToEntity(@NonNull CsvUser csvUser) {
     mapper.typeMap(CsvUser.class, User.class)
-        .setPostConverter(csvUserPasswordDataConverter());
+        .setPostConverter(csvUserSpecifiedDataConverter());
     return mapper.map(csvUser, User.class);
   }
 
@@ -97,7 +100,7 @@ public class UserConverter {
     };
   }
 
-  public Converter<CsvUser, User> csvUserPasswordDataConverter() {
+  public Converter<CsvUser, User> csvUserSpecifiedDataConverter() {
     return mappingContext -> {
       CsvUser source = mappingContext.getSource();
       User destination = mappingContext.getDestination();

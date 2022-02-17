@@ -1,9 +1,9 @@
 package com.leverx.internship.project.department.service;
 
 import com.leverx.internship.project.department.web.dto.request.DepartmentBodyRequest;
+import com.leverx.internship.project.department.web.dto.request.DepartmentParamRequest;
 import com.leverx.internship.project.department.web.dto.response.DepartmentProjectsResponse;
 import com.leverx.internship.project.department.web.dto.response.DepartmentResponse;
-import com.leverx.internship.project.department.web.dto.request.DepartmentParamRequest;
 import com.leverx.internship.project.department.web.dto.response.DepartmentUsersResponse;
 import java.util.List;
 

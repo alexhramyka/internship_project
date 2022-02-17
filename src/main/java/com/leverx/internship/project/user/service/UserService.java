@@ -4,7 +4,6 @@ import com.leverx.internship.project.user.web.dto.request.UserBodyRequest;
 import com.leverx.internship.project.user.web.dto.request.UserParamRequest;
 import com.leverx.internship.project.user.web.dto.response.UserResponse;
 import java.util.List;
-
 import org.springframework.security.core.userdetails.UserDetails;
 
 public interface UserService {

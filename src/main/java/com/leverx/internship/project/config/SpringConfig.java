@@ -1,5 +1,6 @@
 package com.leverx.internship.project.config;
 
+import java.time.Clock;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -18,5 +19,10 @@ public class SpringConfig {
     CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
     multipartResolver.setMaxUploadSize(100000);
     return multipartResolver;
+  }
+
+  @Bean
+  public Clock clock() {
+    return Clock.systemDefaultZone();
   }
 }

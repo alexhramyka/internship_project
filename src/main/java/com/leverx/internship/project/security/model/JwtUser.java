@@ -1,11 +1,11 @@
 package com.leverx.internship.project.security.model;
 
 import com.leverx.internship.project.user.repository.entity.User;
+import java.util.Collection;
+import java.util.Set;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import java.util.Collection;
-import java.util.Set;
 
 public class JwtUser implements UserDetails {
 

@@ -8,7 +8,8 @@ import org.jetbrains.annotations.NotNull;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class DepartmentResponse implements Comparable<DepartmentResponse>{
+public class DepartmentResponse implements Comparable<DepartmentResponse> {
+
   private int id;
   private String name;
   private String description;

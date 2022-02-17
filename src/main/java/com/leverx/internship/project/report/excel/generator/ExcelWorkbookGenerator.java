@@ -5,8 +5,8 @@ import com.leverx.internship.project.project.web.dto.response.ProjectResponse;
 import com.leverx.internship.project.report.model.ReportType;
 import com.leverx.internship.project.user.web.dto.response.UserResponse;
 import java.util.Map;
-import java.util.TreeMap;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import lombok.AllArgsConstructor;
 import org.apache.poi.ss.usermodel.Cell;
@@ -21,7 +21,8 @@ import org.springframework.stereotype.Component;
 public class ExcelWorkbookGenerator {
 
   public Workbook generateReportWorkbook(ReportType reportType,
-                                         Map<DepartmentResponse, Map<UserResponse, Set<ProjectResponse>>> reportResult) {
+      Map<DepartmentResponse,
+          Map<UserResponse, Set<ProjectResponse>>> reportResult) {
     XSSFWorkbook workbook = new XSSFWorkbook();
     XSSFSheet spreadsheet = workbook.createSheet(reportType.getReportName());
     XSSFRow row;
@@ -63,12 +64,12 @@ public class ExcelWorkbookGenerator {
                               project -> {
                                 reportData.put(
                                     String.valueOf(numberOfRow.get()),
-                                    new Object[] {
-                                      departmentData.getName(),
-                                      employee.getFirstName() + " " + employee.getLastName(),
-                                      project.getName(),
-                                      project.getDateStart(),
-                                      project.getDateEnd()
+                                    new Object[]{
+                                        departmentData.getName(),
+                                        employee.getFirstName() + " " + employee.getLastName(),
+                                        project.getName(),
+                                        project.getDateStart(),
+                                        project.getDateEnd()
                                     });
                                 numberOfRow.getAndIncrement();
                               })));
@@ -83,7 +84,7 @@ public class ExcelWorkbookGenerator {
                               project -> {
                                 reportData.put(
                                     String.valueOf(numberOfRow.get()),
-                                    new Object[] {
+                                    new Object[]{
                                         departmentData.getName(),
                                         employee.getFirstName() + " " + employee.getLastName(),
                                         project.getName(),
@@ -92,5 +93,5 @@ public class ExcelWorkbookGenerator {
                                 numberOfRow.getAndIncrement();
                               })));
     }
-    }
+  }
 }

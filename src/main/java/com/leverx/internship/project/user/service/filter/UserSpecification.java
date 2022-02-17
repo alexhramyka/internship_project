@@ -4,7 +4,9 @@ import com.leverx.internship.project.user.repository.entity.User;
 import org.springframework.data.jpa.domain.Specification;
 
 public class UserSpecification {
-  private UserSpecification() {}
+
+  private UserSpecification() {
+  }
 
   public static Specification<User> userParamHasEmail(String email) {
     return (user, criteriaQuery, criteriaBuilder) -> {

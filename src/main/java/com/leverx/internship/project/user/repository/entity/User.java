@@ -3,10 +3,11 @@ package com.leverx.internship.project.user.repository.entity;
 import com.leverx.internship.project.department.repository.entity.Department;
 import com.leverx.internship.project.project.repository.entity.Project;
 import com.leverx.internship.project.security.model.Role;
-import java.time.LocalDate;
+import java.time.Instant;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
@@ -18,15 +19,21 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Table(name = "users")
 @RequiredArgsConstructor
+@AllArgsConstructor
 @Setter
 @Getter
+@EntityListeners(AuditingEntityListener.class)
 public class User {
 
   @Id
@@ -54,10 +61,12 @@ public class User {
   private Role role;
 
   @Column(name = "created_at", nullable = false)
-  private LocalDate createdAt;
+  @CreatedDate
+  private Instant createdAt;
 
   @Column(name = "updated_at", nullable = false)
-  private LocalDate updatedAt;
+  @LastModifiedDate
+  private Instant updatedAt;
 
   @ManyToMany(mappedBy = "employees")
   private Set<Project> projects;
