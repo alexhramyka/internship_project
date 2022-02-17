@@ -59,13 +59,13 @@ class DepartmentServiceImplTest {
     final DepartmentParamRequest departmentParamRequest =
         new DepartmentParamRequest("name", "description");
     final DepartmentResponse departmentResponse = new DepartmentResponse();
-    departmentResponse.setId(0);
+    departmentResponse.setId(1);
     departmentResponse.setName("name");
     departmentResponse.setDescription("description");
     final List<DepartmentResponse> expectedResult = List.of(departmentResponse);
 
     final User user = new User();
-    user.setId(0);
+    user.setId(1);
     user.setFirstName("firstName");
     user.setLastName("lastName");
     user.setEmail("email");
@@ -77,7 +77,7 @@ class DepartmentServiceImplTest {
     user.setProjects(
         Set.of(
             new Project(
-                0,
+                1,
                 "name",
                 "description",
                 clock.instant(),
@@ -88,7 +88,7 @@ class DepartmentServiceImplTest {
                 "mail",
                 Set.of(new User()))));
     final User user1 = new User();
-    user1.setId(0);
+    user1.setId(1);
     user1.setFirstName("firstName");
     user1.setLastName("lastName");
     user1.setEmail("email");
@@ -100,7 +100,7 @@ class DepartmentServiceImplTest {
     user1.setProjects(
         Set.of(
             new Project(
-                0,
+                1,
                 "name",
                 "description",
                 clock.instant(),
@@ -114,7 +114,7 @@ class DepartmentServiceImplTest {
         new PageImpl<>(
             List.of(
                 new Department(
-                    0,
+                    1,
                     "name",
                     "description",
                     clock.instant(),
@@ -124,7 +124,7 @@ class DepartmentServiceImplTest {
                     List.of(user),
                     Set.of(
                         new Project(
-                            0,
+                            1,
                             "name",
                             "description",
                             clock.instant(),
@@ -138,7 +138,7 @@ class DepartmentServiceImplTest {
         .thenReturn(departments);
 
     final DepartmentResponse departmentResponse1 = new DepartmentResponse();
-    departmentResponse1.setId(0);
+    departmentResponse1.setId(1);
     departmentResponse1.setName("name");
     departmentResponse1.setDescription("description");
     when(departmentConverter.toDepartmentResponse(any(Department.class)))
@@ -599,7 +599,7 @@ class DepartmentServiceImplTest {
     final Optional<Department> department =
         Optional.of(
             new Department(
-                0,
+                1,
                 "name",
                 "description",
                 clock.instant(),
@@ -608,11 +608,11 @@ class DepartmentServiceImplTest {
                 "mail",
                 new ArrayList<>(),
                 new HashSet<>()));
-    when(departmentRepository.findById(0)).thenReturn(department);
+    when(departmentRepository.findById(1)).thenReturn(department);
 
-    departmentServiceImplUnderTest.delete(0);
+    departmentServiceImplUnderTest.delete(1);
 
-    verify(departmentRepository).deleteById(0);
+    verify(departmentRepository).deleteById(1);
   }
 
   @Test
