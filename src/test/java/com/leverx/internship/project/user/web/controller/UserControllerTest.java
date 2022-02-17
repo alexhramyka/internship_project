@@ -20,11 +20,11 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 @ExtendWith({MockitoExtension.class, SpringExtension.class})
 @ContextConfiguration(classes = {SpringConfig.class, WebConfig.class, H2ConfigTest.class})
@@ -48,7 +48,7 @@ public class UserControllerTest {
   }
 
   @Test
-  void getAllUsersByFirstNameFieldTestPositive() throws Exception {
+  void getAllUsersByFirstNameFieldTestPositive_ShouldReturnOk() throws Exception {
     MockHttpServletResponse response = mockMvc
         .perform(
             get("/users")
@@ -65,7 +65,7 @@ public class UserControllerTest {
   }
 
   @Test
-  void findUserByIdTestPositive() throws Exception {
+  void findUserByIdTestPositive_ShouldReturnOk() throws Exception {
     MockHttpServletResponse response = mockMvc
         .perform(
             get("/users/{id}", 2)
@@ -81,7 +81,7 @@ public class UserControllerTest {
   }
 
   @Test
-  void createTestPositive() throws Exception {
+  void createTestPositive_ShouldReturnCreated() throws Exception {
     String jsonString =
         new JSONObject()
             .put("firstName", "User4")
@@ -106,7 +106,7 @@ public class UserControllerTest {
   }
 
   @Test
-  void updateTestPositive() throws Exception {
+  void updateTestPositive_ShouldReturnOk() throws Exception {
     String jsonString =
         new JSONObject()
             .put("firstName", "UserUpdated").toString();
@@ -121,12 +121,11 @@ public class UserControllerTest {
   }
 
   @Test
-  void deleteTestPositive() throws Exception {
+  void deleteTestPositive_ShouldReturnNoContent() throws Exception {
     final MockHttpServletResponse response = mockMvc.perform(delete("/users/{id}", 4)
             .accept(MediaType.APPLICATION_JSON))
         .andReturn().getResponse();
 
-    assertEquals(HttpStatus.NO_CONTENT.value(), response.getStatus()) ;
+    assertEquals(HttpStatus.NO_CONTENT.value(), response.getStatus());
   }
-
 }
