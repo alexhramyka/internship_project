@@ -104,8 +104,6 @@ public class UserConverter {
     return mappingContext -> {
       CsvUser source = mappingContext.getSource();
       User destination = mappingContext.getDestination();
-      destination.setCreatedAt(clock.instant());
-      destination.setUpdatedAt(clock.instant());
       destination.setPassword(passwordEncoder.encode(source.getPassword()));
       return mappingContext.getDestination();
     };

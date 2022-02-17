@@ -34,6 +34,7 @@ public class GlobalExceptionHandler {
         String.format("Error of authentication '%s'", ex.getMessage()));
     return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
   }
+
   @ExceptionHandler(ReportNotFoundException.class)
   public ResponseEntity<ErrorResponse> reportNotFoundException(ReportNotFoundException ex) {
     ErrorResponse errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST,
